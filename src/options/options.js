@@ -120,27 +120,66 @@ onSettingsChanged((settings) => {
 
 // Initial load.
 (async () => {
+  populateRegionSelect();
   populateConsoleSelect();
   populate(await readSettings());
 })();
 
-/** Build the console-uid <select> from CONSOLES, grouped by region. */
-function populateConsoleSelect() {
+
+// Get region select element
+const regionSelect = form.elements["regionUid"];
+
+// Add listener to that for change
+if (regionSelect) {
+  regionSelect.addEventListener("change", (e) => {  //=> passing a function and not calling it
+    populateConsoleSelect(e.target.value); //populate with only selected region (using the value of the event target)
+  });
+}
+
+
+/** Build the console-uid <select> from CONSOLES, grouped by region. 
+ * @param {string} region - if provided, only consoles from this region will be included
+ * @todo Add reverse checking of existing consoleUid, to try to preserve selection over the region
+ *        e.g. if pre-selected is PAL SNES and region change is NTSC, try to automatically set consoleUid to NTSC SNES
+*/
+function populateConsoleSelect(region = "") {
+
+  //get the console select element
   const sel = form.elements["consoleUid"];
   if (!sel) return;
-  // Bucket by group, preserving array order within each.
+
+  sel.innerHTML = ""; // clear existing options
+
+  //populate with the default (any)
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "(any)";
+  defaultOption.selected = true;
+  sel.appendChild(defaultOption);
+
+  // Bucket by group (={region,[list of consoles in that region]}), preserving array order within each.
   const byGroup = new Map();
-  for (const g of CONSOLE_GROUPS) byGroup.set(g, []);
+  for (const g of CONSOLE_GROUPS) byGroup.set(g, []); //empty first
+
+  // Populate byGroup map with consoles, skip unkown
   for (const c of CONSOLES) {
+    if (region && c.group !== region) continue; //if region is selected and this is not that group, skip this group
     const arr = byGroup.get(c.group) ?? [];
     arr.push(c);
     byGroup.set(c.group, arr);
   }
+
+
   for (const group of CONSOLE_GROUPS) {
     const items = byGroup.get(group);
+
+    //Skip emtpy groups
     if (!items || items.length === 0) continue;
+
+    //label the group as optgroup
     const og = document.createElement("optgroup");
     og.label = group;
+
+    //Add each console in the group as option
     for (const c of items) {
       const opt = document.createElement("option");
       opt.value = c.id;
@@ -148,6 +187,19 @@ function populateConsoleSelect() {
       og.appendChild(opt);
     }
     sel.appendChild(og);
+  }
+}
+
+/** Populate the console-uid by region */
+function populateRegionSelect() {
+  const sel = form.elements["regionUid"];
+  if (!sel) return;
+  //Gather regions from consoles
+  for(const r of CONSOLE_GROUPS){
+    const opt = document.createElement("option");
+    opt.value = r;
+    opt.textContent = r;
+    sel.appendChild(opt);
   }
 }
 

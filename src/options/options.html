@@ -75,6 +75,12 @@
           <legend>More filters</legend>
 
           <label class="field">
+            <span class="label">Console Region (NTSC / PAL / JAPAN)</span>
+            <select name="regionUid">
+              <option value="">(any)</option>
+            </select>
+          </label>
+          <label class="field">
             <span class="label">Console / platform</span>
             <select name="consoleUid">
               <option value="">(any)</option>
@@ -131,7 +137,7 @@
           <label class="field">
             <span class="label">Context-menu title</span>
             <input type="text" name="menuTitle"
-                   placeholder='Search "%s" on PriceCharting'>
+                   placeholder='Search PriceCharting for "%s"'>
             <small>
               <code>%s</code> is replaced by the browser with the selected text
               (the browser truncates very long selections automatically).

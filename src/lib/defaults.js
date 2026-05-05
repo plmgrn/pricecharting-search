@@ -43,6 +43,7 @@ export const DEFAULTS = Object.freeze({
   // Empty string means "don't send this parameter at all" (i.e. no
   // filter). See docs/pricecharting-url-reference.md for valid values.
   broadCategory: "",        // e.g. "video-games", "pokemon-cards"
+  regionUid: "",            // Maps to the CONSOLE_GROUPS from consoles.js
   consoleUid: "",           // e.g. "G2" (only meaningful when broadCategory=video-games)
   regionName: "",           // "ntsc" | "pal" | "jp" | ""
   sort: "popularity",       // "popularity" is PriceCharting's own default
@@ -72,7 +73,8 @@ export const DEFAULTS = Object.freeze({
 
   // Context-menu item title. `%s` is replaced by the browser with the
   // (browser-truncated) selection text.
-  menuTitle: 'Search "%s" on PriceCharting',
+  //todo: this should not be allowed to be empty, in case user accidentally empties field in settings
+  menuTitle: 'Search PriceCharting for "%s"',
 
   // ── Advanced escape hatch ─────────────────────────────────────────
   /**
