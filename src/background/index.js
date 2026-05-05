@@ -21,6 +21,8 @@ async function createOrUpdateMenu() {
     await api.contextMenus.remove(MENU_ID);
   } catch { /* not present yet */ }
 
+  //TODO: allow multiple menu items (Search for LEGO *input*, Search for PAL videogames *input*)
+  //      For this multiple stored setting sets need to be stored.
   api.contextMenus.create({
     id: MENU_ID,
     title: settings.menuTitle,
