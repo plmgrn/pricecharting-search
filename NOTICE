@@ -1,0 +1,66 @@
+# NOTICE
+
+**Search on PriceCharting**
+
+Copyright (c) 2026 Otto Palmgren
+
+The author may be contacted via GitHub: [@plmgrn](https://github.com/plmgrn).
+The handle is provided as a contact pointer only; copyright is held by the
+natural person named above and is not affected by any change to the GitHub
+account.
+
+This software is licensed under the **GNU Affero General Public License,
+version 3** (AGPL-3.0). See [`LICENSE`](./LICENSE) for the full text.
+
+---
+
+## Attribution
+
+Any redistribution — in source or binary form, modified or unmodified —
+must preserve this `NOTICE` file, the `LICENSE` file, and the copyright
+notice above.
+
+## Non-endorsement
+
+The name **"Search on PriceCharting"**, the name of the author
+(**Otto Palmgren**), and the author's GitHub handle (**@plmgrn**) may not
+be used to endorse, promote, or imply authorship of derivative works
+without prior written permission. Forks are welcome, but they must be
+renamed and must not present themselves as the original project or as
+products of the original author.
+
+This project is not affiliated with, endorsed by, or sponsored by
+PriceCharting. "PriceCharting" is a trademark of its respective owner.
+
+## Commercial licensing
+
+The AGPL-3.0 is intended for personal, educational, and other
+non-commercial use, and for anyone willing to release their derivative
+work under the same AGPL-3.0 terms.
+
+If you wish to use this project — in whole or in part — as part of a
+**commercial / monetized product or service** under terms that are not
+compatible with the AGPL-3.0 (for example: closed-source distribution,
+bundling in a paid application, integration into a paid SaaS, or
+shipping with proprietary modifications), please contact the author for a
+separate commercial license.
+
+The author is generally happy to grant commercial use; the goal of this
+clause is simply to be informed and to keep open the option of agreeing
+on terms. Inquiries are welcome and not assumed to be adversarial.
+
+### Contact channels
+
+Use any of the following:
+
+1. **Open a GitHub Issue** in this repository with the label
+   `commercial-license` (preferred for a public paper trail). Use the
+   "Commercial license inquiry" issue template if available.
+2. **Open a GitHub Discussion** in the *Licensing* category, if
+   Discussions are enabled.
+3. **Direct contact via the maintainer's GitHub profile**:
+   <https://github.com/plmgrn> — see the contact information listed
+   there.
+
+No fee schedule is published. Terms (including "free, with credit") are
+agreed case by case.

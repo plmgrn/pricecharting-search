@@ -1,0 +1,44 @@
+# Line-ending policy for the repo.
+# See https://git-scm.com/docs/gitattributes for syntax.
+#
+# Goal: every text file is stored AND checked out as LF, on every OS.
+# This matches `.editorconfig` (`end_of_line = lf`) and avoids the
+# Windows-default CRLF round-trip warning.
+
+# Default: auto-detect text vs binary, normalize to LF in the repo and
+# in every working copy.
+* text=auto eol=lf
+
+# Explicit text rules (clarity over relying on auto-detection).
+*.md       text eol=lf
+*.txt      text eol=lf
+*.json     text eol=lf
+*.js       text eol=lf
+*.cjs      text eol=lf
+*.mjs      text eol=lf
+*.html     text eol=lf
+*.css      text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.sh       text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig  text eol=lf
+LICENSE    text eol=lf
+NOTICE     text eol=lf
+
+# Windows-only scripts keep CRLF (none in this project today, but the
+# rule is here so adding one later doesn't break it).
+*.bat      text eol=crlf
+*.cmd      text eol=crlf
+*.ps1      text eol=crlf
+
+# Binary files: git must never try to "fix" their bytes.
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.zip      binary
+*.xpi      binary
+*.crx      binary

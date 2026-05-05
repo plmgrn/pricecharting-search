@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Search on PriceCharting",
+  "version": "1.0.0",
+  "description": "Right-click selected text to look up its price on PriceCharting.com.",
+  "permissions": ["contextMenus"],
+  "background": {
+    "service_worker": "background/index.js"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pricecharting-search@plmgrn.users.noreply.github.com"
+    }
+  }
+}

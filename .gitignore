@@ -1,0 +1,14 @@
+*.zip
+*.xpi
+node_modules/
+web-ext-artifacts/
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local-only working folder (notes, scratch, drafts, secrets).
+# Ignore the *contents* (not the directory itself) so the un-ignore
+# below can re-include the README. If `local/` were ignored directly,
+# git wouldn't descend into it and the negation would never apply.
+local/*
+!local/README.md
