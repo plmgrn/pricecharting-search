@@ -3,10 +3,11 @@
   "name": "Search on PriceCharting",
   "version": "1.0.0",
   "description": "Right-click selected text to look up its price on PriceCharting.com.",
-  "permissions": ["contextMenus"],
+  "permissions": ["contextMenus", "storage"],
   "background": {
     "service_worker": "background/index.js",
-    "scripts": ["background/index.js"]
+    "scripts": ["background/index.js"],
+    "type": "module"
   },
   "browser_specific_settings": {
     "gecko": {
