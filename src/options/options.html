@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search on PriceCharting — Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Search on PriceCharting</h1>
+      <p class="subtitle">Settings</p>
+    </header>
+
+    <form id="settings-form" autocomplete="off">
+
+      <!-- ========== Basic settings (always visible) ========== -->
+      <fieldset>
+        <legend>Basic</legend>
+        <p class="hint">
+          Applied to every search. Pick <em>(any)</em> to leave a
+          filter off.
+        </p>
+
+        <label class="field">
+          <span class="label">Category</span>
+          <select name="broadCategory">
+            <option value="">(any)</option>
+            <option value="video-games">Video games</option>
+            <option value="trading-cards">Trading cards (Pokémon, MTG, Yu-Gi-Oh, …)</option>
+            <option value="comic-books">Comics</option>
+            <option value="funko-pops">Funko Pop</option>
+            <option value="coins">Coins</option>
+            <option value="lego-sets">LEGO</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="label">Region</span>
+          <select name="regionName">
+            <option value="">(any)</option>
+            <option value="ntsc">NTSC / Americas</option>
+            <option value="pal">PAL / Europe</option>
+            <option value="japan">Japan</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="label">Sort by</span>
+          <select name="sort">
+            <option value="popularity">Popularity (default)</option>
+            <option value="name">Name (alphabetical)</option>
+            <option value="price-highest">Price: high to low</option>
+            <option value="change-dollar">Biggest price increase</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="label">Open the result in</span>
+          <select name="openBehavior">
+            <option value="next">A new tab next to the current one</option>
+            <option value="end">A new tab at the end</option>
+            <option value="window">A new window</option>
+            <option value="current">The current tab (replaces it)</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- ========== Additional (collapsed by default) ========== -->
+      <details class="more">
+        <summary>Additional settings</summary>
+        <div class="more-body">
+
+        <fieldset>
+          <legend>More filters</legend>
+
+          <label class="field">
+            <span class="label">Console / platform</span>
+            <select name="consoleUid">
+              <option value="">(any)</option>
+            </select>
+            <small>
+              Only meaningful when category is <em>Video games</em>.
+              Region-specific releases (PAL/JP/Asian English) are
+              listed as separate consoles — if you set both Region
+              and Console, the Console wins.
+            </small>
+          </label>
+
+          <label class="field checkbox">
+            <input type="checkbox" name="excludeVariants">
+            <span class="label">Hide variant editions</span>
+          </label>
+
+          <label class="field checkbox">
+            <input type="checkbox" name="showImages">
+            <span class="label">Show thumbnails in results</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Tab behavior</legend>
+
+          <label class="field checkbox">
+            <input type="checkbox" name="focusNew">
+            <span class="label">Focus the new tab/window</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Selection handling</legend>
+
+          <label class="field checkbox">
+            <input type="checkbox" name="trimSelection">
+            <span class="label">Trim and collapse whitespace</span>
+            <small>
+              Removes leading/trailing whitespace and collapses internal
+              whitespace runs into single spaces.
+            </small>
+          </label>
+
+          <label class="field">
+            <span class="label">Maximum selection length</span>
+            <input type="number" name="maxSelectionLength" min="1" max="2000" step="1">
+            <small>
+              Selections longer than this are truncated before searching.
+              Stops accidentally-huge selections from producing pathological URLs.
+            </small>
+          </label>
+
+          <label class="field">
+            <span class="label">Context-menu title</span>
+            <input type="text" name="menuTitle"
+                   placeholder='Search "%s" on PriceCharting'>
+            <small>
+              <code>%s</code> is replaced by the browser with the selected text
+              (the browser truncates very long selections automatically).
+            </small>
+          </label>
+        </fieldset>
+        </div>
+      </details>
+
+      <!-- ========== Experimental (collapsed by default) ========== -->
+      <details class="more experimental">
+        <summary>Experimental</summary>
+        <div class="more-body">
+
+        <fieldset>
+          <legend>Custom URL template</legend>
+
+          <label class="field">
+            <span class="label">Template</span>
+            <input type="text" name="customUrlTemplate"
+                   placeholder="https://example.com/search?q={q}">
+            <small>
+              If set, this URL is used <strong>verbatim</strong> for every
+              search and <strong>all</strong> the filters above are ignored.
+              Must contain <code>{q}</code> — it is replaced by the
+              URL-encoded selection. Useful for pointing at a different
+              endpoint or hand-crafting parameters this UI doesn't yet expose.
+            </small>
+          </label>
+        </fieldset>
+        </div>
+      </details>
+
+      <!-- ========== Footer / actions ========== -->
+      <footer>
+        <button type="button" id="reset-button">Reset to defaults</button>
+        <span id="status" role="status" aria-live="polite"></span>
+      </footer>
+
+    </form>
+  </main>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

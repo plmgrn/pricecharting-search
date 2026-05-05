@@ -4,10 +4,17 @@
   "version": "1.0.0",
   "description": "Right-click selected text to look up its price on PriceCharting.com.",
   "permissions": ["contextMenus", "storage"],
+  "action": {
+    "default_title": "Search on PriceCharting — settings"
+  },
   "background": {
     "service_worker": "background/index.js",
     "scripts": ["background/index.js"],
     "type": "module"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
   },
   "browser_specific_settings": {
     "gecko": {

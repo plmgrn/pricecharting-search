@@ -61,6 +61,20 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   await openResult(url, tab, settings);
 });
 
+// Toolbar button. With no `default_popup` set in the manifest, clicks
+// fire `action.onClicked` here. For now this is the fast path to the
+// settings page (Firefox otherwise greys out the icon and the user has
+// to dig through about:addons). Later this slot can host a popup with
+// quick filters / recent searches; the manifest entry is already in
+// place.
+if (api.action && api.action.onClicked) {
+  api.action.onClicked.addListener(() => {
+    if (api.runtime.openOptionsPage) {
+      api.runtime.openOptionsPage();
+    }
+  });
+}
+
 /**
  * Open the result URL according to settings.openBehavior.
  *

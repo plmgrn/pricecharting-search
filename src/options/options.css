@@ -1,0 +1,226 @@
+/* Options page — minimal, system-font, dark/light aware. */
+
+:root {
+  color-scheme: light dark;
+  --bg: Canvas;
+  --fg: CanvasText;
+  --muted: GrayText;
+  --border: color-mix(in srgb, CanvasText 20%, transparent);
+  --field-bg: Field;
+  --field-fg: FieldText;
+  --accent: AccentColor;
+  --accent-fg: AccentColorText;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Reserve space for the vertical scrollbar so panels opening past
+   the viewport edge don't cause the page to jump horizontally. */
+html {
+  scrollbar-gutter: stable;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.subtitle {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+}
+
+fieldset {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+.hint {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.92em;
+}
+
+.field {
+  display: block;
+  margin: 0.85rem 0;
+}
+.field .label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+.field small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field input:not([type]),
+.field select {
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  background: var(--field-bg);
+  color: var(--field-fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.field.checkbox {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.6rem;
+  align-items: start;
+}
+.field.checkbox input[type="checkbox"] {
+  margin: 0.2rem 0 0;
+}
+.field.checkbox .label {
+  margin: 0;
+  font-weight: 500;
+}
+.field.checkbox small {
+  grid-column: 2;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  padding: 0 0.2em;
+  background: color-mix(in srgb, CanvasText 8%, transparent);
+  border-radius: 3px;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  background: var(--field-bg);
+  color: var(--field-fg);
+  border-radius: 4px;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover {
+  border-color: color-mix(in srgb, CanvasText 35%, transparent);
+}
+
+#status {
+  color: var(--muted);
+  font-size: 0.9em;
+  min-height: 1.2em;
+  transition: opacity 0.2s;
+}
+#status.flash {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* Disclosure sections (Additional, Experimental). */
+details.more {
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, CanvasText 3%, transparent);
+  overflow: hidden;
+}
+details.more > summary {
+  position: relative;
+  padding: 0.7rem 1rem 0.7rem 2.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+details.more > summary::-webkit-details-marker { display: none; }
+
+/* Plus/minus marker. Both bars anchor from the same center point
+   (top/left at 50% of a 1em-square box) so centering is exact and
+   independent of font metrics. The vertical bar retracts via scaleY. */
+details.more > summary::before,
+details.more > summary::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1.4rem; /* center of the 2.4rem - 1rem gutter */
+  background: var(--muted);
+  border-radius: 1px;
+  transform-origin: center center;
+}
+details.more > summary::before {
+  /* Horizontal bar — always present, centered. */
+  width: 0.75em;
+  height: 1.5px;
+  margin: -0.75px 0 0 -0.375em; /* center on (left, top) */
+}
+details.more > summary::after {
+  /* Vertical bar — same center, rotated. Retracts on open. */
+  width: 1.5px;
+  height: 0.75em;
+  margin: -0.375em 0 0 -0.75px; /* center on (left, top) */
+  transform: scaleY(1);
+  transition: transform 0.35s ease;
+}
+details.more[open] > summary::after {
+  transform: scaleY(0);
+}
+
+details.more > summary:hover {
+  background: color-mix(in srgb, CanvasText 6%, transparent);
+}
+
+/* Animated body. Height + opacity are driven by JS (see options.js)
+   so we don't fight the <details> element's native display toggle.
+   No CSS open/close animation — JS sets inline styles and removes
+   them when the transition ends. */
+.more-body {
+  overflow: hidden;
+  transition: height 0.35s ease, opacity 0.25s ease;
+}
+
+details.more .more-body > fieldset {
+  margin: 1rem;
+  background: var(--bg);
+}
+details.more .more-body > fieldset:first-child {
+  margin-top: 1rem;
+}
+details.more .more-body > fieldset:last-child {
+  margin-bottom: 1rem;
+}
+
+details.experimental > summary {
+  color: color-mix(in srgb, var(--accent) 70%, var(--fg));
+}
