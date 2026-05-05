@@ -5,11 +5,15 @@
   "description": "Right-click selected text to look up its price on PriceCharting.com.",
   "permissions": ["contextMenus"],
   "background": {
-    "service_worker": "background/index.js"
+    "service_worker": "background/index.js",
+    "scripts": ["background/index.js"]
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "pricecharting-search@plmgrn.users.noreply.github.com"
+      "id": "pricecharting-search@plmgrn.users.noreply.github.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   }
 }
