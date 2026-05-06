@@ -42,10 +42,10 @@ export const DEFAULTS = Object.freeze({
   // ── PriceCharting search filters ──────────────────────────────────
   // Empty string means "don't send this parameter at all" (i.e. no
   // filter). See docs/pricecharting-url-reference.md for valid values.
-  broadCategory: "",        // e.g. "video-games", "pokemon-cards"
-  regionUid: "",            // Maps to the CONSOLE_GROUPS from consoles.js
+  broadCategory: "",        // e.g. "video-games", "trading-cards"
+  consoleGroup: "",         // UI-only — filters the console dropdown by region (maps to CONSOLE_GROUPS). Never sent as a URL param.
   consoleUid: "",           // e.g. "G2" (only meaningful when broadCategory=video-games)
-  regionName: "",           // "ntsc" | "pal" | "jp" | ""
+  regionName: "",           // "ntsc" | "pal" | "japan" | ""
   sort: "popularity",       // "popularity" is PriceCharting's own default
   excludeVariants: false,   // hide variant editions when true
   showImages: true,         // thumbnails in result list

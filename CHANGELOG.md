@@ -27,18 +27,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Console enumeration** (`src/lib/consoles.js`): the full Console ID
   Table (~200 entries) extracted from PriceCharting's official API
   documentation, grouped by region (Americas / PAL / Japan / Asian
-  English / Magazines & misc). Verified that the IDs documented for
-  the Marketplace API's `console=` parameter are the same identifiers
-  the search-products URL accepts as `console-uid=` (e.g. `G2` =
-  GameBoy Color). The options page's Console dropdown is populated
-  from this list with `<optgroup>` headers.
+  English / Magazines & misc).
+- **Console group filter**: dropdown in Additional settings that
+  narrows the console dropdown to a single region.
+- **Extension icons**: 16/32/48/64/128 px PNGs wired into the manifest
+  (`icons` + `action.default_icon`).
 - **Reference doc** (`docs/pricecharting-url-reference.md`) documenting
   every URL parameter, with confirmed enumerations for `sort`,
-  `broad-category`, `region-name` (note: Japan's slug is `japan`, not
-  `jp`), and the full `console-uid` story including the
-  region/console overlap caveat.
+  `broad-category`, `region-name`, and `console-uid`.
+- **Agent instructions** (`.github/copilot-instructions.md`) capturing
+  coding style, naming, and project conventions.
 
 ### Changed
+- Context-menu title changed to `Search PriceCharting for "%s"`.
+- Renamed `regionUid` setting to `consoleGroup` — it's a UI-only
+  field that filters the console dropdown, never sent as a URL param.
+- Fixed stale comments in `defaults.js` (`jp` → `japan`,
+  `pokemon-cards` → `trading-cards`).
+- Updated project tree in `README.md` and `docs/architecture.md` to
+  match actual on-disk layout (removed phantom planned folders).
+
+### Scaffolding
 - Restructured the repository: source files moved under `src/`, developer
   docs under `docs/`, GitHub repo machinery under `.github/`. The
   extension itself is unchanged in behavior.

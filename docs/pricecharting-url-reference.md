@@ -242,6 +242,6 @@ What's still missing:
 - [ ] Any additional `broad-category` slugs (e.g. for sportscardspro.com
   cross-site categories?).
 
-The options page already accepts free-text values for every dropdown,
-so missing enumerations don't block users — they just mean the
-autocomplete suggestion list is shorter than it could be.
+The options page uses fixed `<select>` dropdowns for all filter fields,
+so only confirmed values are offered. Missing enumerations don't block
+users — they just mean the dropdown is shorter than it could be.

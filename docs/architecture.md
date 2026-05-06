@@ -28,28 +28,35 @@ at runtime, it lives in `src/`.
 `src/` is the directory `web-ext` packages and the directory you point
 "Load unpacked" at in Chrome. The `manifest.json` lives at its root.
 
-Current (minimal) layout:
+Current layout:
 
 ```
 src/
 ├── manifest.json
-└── background/
-    └── index.js          # MV3 service worker entry
+├── background/
+│   └── index.js          # MV3 service worker entry
+├── icons/                # Extension icons (16–128 px PNGs)
+├── lib/
+│   ├── api.js            # browser/chrome shim
+│   ├── consoles.js       # Console ID table (~200 entries)
+│   ├── defaults.js       # DEFAULTS, SCHEMA_VERSION, constants
+│   ├── settings.js       # read/write/reset/migrate
+│   └── url-template.js   # normalizeSelection, buildSearchUrl
+└── options/
+    ├── options.html
+    ├── options.css
+    └── options.js
 ```
 
 Planned surfaces — each will appear as a sibling of `background/` when
-the corresponding feature lands. The conventions for them are listed
+the corresponding feature lands:
 below so the layout is decided in advance:
 
 ```
 src/
-├── options/          # Settings page
 ├── popup/            # Toolbar action popup
 ├── content/          # Content scripts
-├── lib/              # Shared modules (no DOM, no listeners)
-├── _locales/         # i18n message catalogs
-└── assets/
-    └── icons/        # 16/48/128 px PNGs
+└── _locales/         # i18n message catalogs
 ```
 
 ### Folder responsibilities
@@ -81,6 +88,7 @@ each other; if two surfaces need the same thing, it belongs in `lib/`.
 | File | Purpose |
 |---|---|
 | `architecture.md` | This file. Layout + conventions only. |
+| `pricecharting-url-reference.md` | URL parameter reference for the search-products endpoint. |
 
 Maintainer-only working notes (status, roadmap, internal TODOs) live in
 the git-ignored `local/` folder and are not part of the published repo.

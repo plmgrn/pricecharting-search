@@ -48,14 +48,13 @@ pricecharting-search/
 ├── .github/                            # Issue templates, CI
 └── src/                                # Everything that ships to browsers
     ├── manifest.json
-    ├── background/                     # Service worker entry + helpers
-    ├── options/                        # (planned) settings page
-    ├── popup/                          # (planned) toolbar action
-    ├── content/                        # (planned) content scripts
+    ├── background/                     # Service worker entry
+    ├── icons/                          # 16/32/48/64/128 px PNGs
     ├── lib/                            # Shared pure modules
-    ├── _locales/                       # i18n catalogs
-    └── assets/icons/                   # 16/48/128 px PNG icons
+    └── options/                        # Settings page
 ```
+
+Planned: `popup/` (toolbar action popup), `content/` (content scripts).
 
 See [`docs/architecture.md`](./docs/architecture.md) for the folder
 layout and conventions.

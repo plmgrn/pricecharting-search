@@ -86,8 +86,16 @@ function scheduleSave() {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try {
-      await writeSettings(collect());
+      const userSettings = collect();
+      const mergedSettings = { ...DEFAULTS, ...userSettings };
+      // don't let user save a blank menu title — context menu would be invisible
+      if (!mergedSettings.menuTitle) {
+        mergedSettings.menuTitle = DEFAULTS.menuTitle;
+        form.elements["menuTitle"].value = DEFAULTS.menuTitle;
+      }
+      await writeSettings(mergedSettings);
       flashStatus("Saved");
+      return;
     } catch (e) {
       statusEl.textContent = "Save failed: " + (e && e.message ? e.message : e);
     }
@@ -120,27 +128,65 @@ onSettingsChanged((settings) => {
 
 // Initial load.
 (async () => {
-  populateRegionSelect();
-  populateConsoleSelect();
-  populate(await readSettings());
+  populateGroupSelect();  //populate group/region dropdown
+  const localSettings = await readSettings(); //Fetch the user stored settings
+  //if settings exist for the selected region, fill console dropdown with that region
+  populateConsoleSelect(localSettings.consoleGroup ?? "");
+  populate(localSettings);  //Populate the UI with local settings
 })();
 
 
-// Get region select element
-const regionSelect = form.elements["regionUid"];
-
-// Add listener to that for change
-if (regionSelect) {
-  regionSelect.addEventListener("change", (e) => {  //=> passing a function and not calling it
-    populateConsoleSelect(e.target.value); //populate with only selected region (using the value of the event target)
+// filter the console list when the region dropdown changes
+const groupSelect = form.elements["consoleGroup"];
+if (groupSelect) {
+  groupSelect.addEventListener("change", (e) => {  //=> passing a function and not calling it
+    const prev = form.elements["consoleUid"]?.value;
+    populateConsoleSelect(e.target.value);
+    tryRestoreConsole(prev, e.target.value);
   });
+}
+
+/**
+ * After repopulating the console dropdown for a new group, try to
+ * keep the user's selection if an equivalent console exists.
+ * e.g. "PAL Super Nintendo" → Americas → "Super Nintendo".
+ *
+ * Strategy: strip known region prefixes from the old name, then look
+ * for a console whose name ends with that base string. Not perfect
+ * (some names diverge: "Sega Genesis" vs "Sega Mega Drive") but
+ * covers the common case.
+ *
+ * @param {string} prevId - previously selected console-uid
+ * @param {string} newGroup - the group we just switched to
+ */
+function tryRestoreConsole(prevId, newGroup) {
+  if (!prevId) return; // was (any), nothing to match
+  const sel = form.elements["consoleUid"];
+  if (!sel) return;
+
+  const prev = CONSOLES.find(c => c.id === prevId);
+  if (!prev) return;
+
+  const baseName = stripRegionPrefix(prev.name);
+
+  // find a match in the new group (or all groups if newGroup is empty)
+  const match = CONSOLES.find(c =>
+    (!newGroup || c.group === newGroup) &&
+    stripRegionPrefix(c.name) === baseName
+  );
+
+  if (match) sel.value = match.id;
+}
+
+const REGION_PREFIXES = /^(PAL |JP |Asian English |Asian )/;
+/** @param {string} name */
+function stripRegionPrefix(name) {
+  return name.replace(REGION_PREFIXES, "");
 }
 
 
 /** Build the console-uid <select> from CONSOLES, grouped by region. 
  * @param {string} region - if provided, only consoles from this region will be included
- * @todo Add reverse checking of existing consoleUid, to try to preserve selection over the region
- *        e.g. if pre-selected is PAL SNES and region change is NTSC, try to automatically set consoleUid to NTSC SNES
 */
 function populateConsoleSelect(region = "") {
 
@@ -190,12 +236,11 @@ function populateConsoleSelect(region = "") {
   }
 }
 
-/** Populate the console-uid by region */
-function populateRegionSelect() {
-  const sel = form.elements["regionUid"];
+/** Populate the console-group dropdown from CONSOLE_GROUPS. */
+function populateGroupSelect() {
+  const sel = form.elements["consoleGroup"];
   if (!sel) return;
-  //Gather regions from consoles
-  for(const r of CONSOLE_GROUPS){
+  for (const r of CONSOLE_GROUPS) {
     const opt = document.createElement("option");
     opt.value = r;
     opt.textContent = r;
