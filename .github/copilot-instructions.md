@@ -45,3 +45,26 @@ Plain ES modules, no build step, no framework. Ship folder is `src/`.
 - Don't use `var`. Prefer `const`, use `let` when mutation is needed.
 - Don't create documentation files unless asked.
 - Don't commit generated files or `node_modules/`.
+
+## Documentation
+
+### Pre-push checklist (mandatory)
+
+Before every push, verify that these files reflect the current state:
+- `CHANGELOG.md` — new entry for any user-visible change.
+- `README.md` — feature list, install instructions, project tree.
+- `docs/architecture.md` — folder layout, file table.
+
+Do this **per commit** when the commit introduces changes worth noting.
+If a commit is purely internal (refactor, comment fix, dev tooling),
+documentation updates are optional.
+
+### Tone: user-first
+
+- Changelog entries describe **what changed for the user**, not
+  what syntax was touched.
+  - ✅ "Custom URL templates now reject unsafe schemes."
+  - ❌ "Added regex check in url-template.js line 73."
+- Group small internal fixes under a single line like
+  "Hardened input validation and error handling."
+- Save technical detail for code comments and architecture docs.

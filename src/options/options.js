@@ -194,10 +194,13 @@ function populateConsoleSelect(region = "") {
   const sel = form.elements["consoleUid"];
   if (!sel) return;
 
-  sel.innerHTML = ""; // clear existing options
+  // remove children one-by-one instead of innerHTML to keep the
+  // no-innerHTML-with-data convention clear for future contributors
+  while (sel.firstChild) sel.removeChild(sel.firstChild);
 
   //populate with the default (any)
   const defaultOption = document.createElement("option");
+  defaultOption.value = "";
   defaultOption.textContent = "(any)";
   defaultOption.selected = true;
   sel.appendChild(defaultOption);
@@ -206,7 +209,7 @@ function populateConsoleSelect(region = "") {
   const byGroup = new Map();
   for (const g of CONSOLE_GROUPS) byGroup.set(g, []); //empty first
 
-  // Populate byGroup map with consoles, skip unkown
+  // Populate byGroup map with consoles, skip unknown
   for (const c of CONSOLES) {
     if (region && c.group !== region) continue; //if region is selected and this is not that group, skip this group
     const arr = byGroup.get(c.group) ?? [];
@@ -218,7 +221,7 @@ function populateConsoleSelect(region = "") {
   for (const group of CONSOLE_GROUPS) {
     const items = byGroup.get(group);
 
-    //Skip emtpy groups
+    //Skip empty groups
     if (!items || items.length === 0) continue;
 
     //label the group as optgroup

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] — 2026-05-06
+
+### Fixed
+- Custom URL templates now reject non-HTTP(S) schemes (e.g. `javascript:`,
+  `data:`) — prevents potential misuse.
+- Settings storage reads only known keys, ignoring stray data.
+- Settings-change listener no longer double-fires across storage areas.
+- Selection length is clamped to a hard maximum of 2000 characters,
+  even if manually edited in browser storage.
+- Graceful error handling when opening a result tab fails.
+- Context menu no longer needlessly recreates itself on first startup.
+- Fixed typos in code comments.
+
 ## [1.1.0] — 2026-05-06
 
 ### Added

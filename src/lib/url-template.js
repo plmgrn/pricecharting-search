@@ -19,7 +19,8 @@ export function normalizeSelection(raw, settings) {
     // Trim and collapse all runs of whitespace into single spaces.
     s = s.trim().replace(/\s+/g, " ");
   }
-  const max = Math.max(0, settings.maxSelectionLength | 0);
+  // hard ceiling of 2000 even if someone edits storage directly
+  const max = Math.min(2000, Math.max(0, settings.maxSelectionLength | 0));
   if (max > 0 && s.length > max) s = s.slice(0, max);
   return s;
 }
@@ -68,7 +69,10 @@ export function buildSearchUrl(selection, settings) {
       // Misconfigured template — do not silently search the wrong URL.
       return null;
     }
-    return tmpl.replace(/\{q\}/g, encodeURIComponent(selection));
+    const resolved = tmpl.replace(/\{q\}/g, encodeURIComponent(selection));
+    // only allow http(s) — block javascript:, data:, etc.
+    if (!/^https?:\/\//i.test(resolved)) return null;
+    return resolved;
   }
 
   const url = new URL(SEARCH_BASE_URL);

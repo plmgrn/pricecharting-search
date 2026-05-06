@@ -44,7 +44,11 @@ if (api.runtime.onStartup) {
 
 // Refresh the menu when settings change (e.g. user edited menuTitle in
 // the options page, or sync pulled in changes from another device).
-let lastMenuTitle = null;
+// seed from stored settings so the first onSettingsChanged doesn't
+// wastefully recreate the menu when nothing actually changed
+let lastMenuTitle = undefined;
+readSettings().then(s => { lastMenuTitle = s.menuTitle; });
+
 onSettingsChanged(async (settings) => {
   if (settings.menuTitle !== lastMenuTitle) {
     lastMenuTitle = settings.menuTitle;
@@ -60,7 +64,12 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   const url = buildSearchUrl(selection, settings);
   if (!url) return;
 
-  await openResult(url, tab, settings);
+  // guard against bad custom-template URLs that tabs.create rejects
+  try {
+    await openResult(url, tab, settings);
+  } catch (e) {
+    console.warn("Failed to open result:", e);
+  }
 });
 
 // Toolbar button. With no `default_popup` set in the manifest, clicks

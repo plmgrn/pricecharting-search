@@ -31,7 +31,8 @@ export async function readSettings() {
   const area = pickArea();
   if (!area) return { ...DEFAULTS };
   try {
-    const stored = await area.get(null);
+    // only read keys we know about — ignore stray data in the area
+    const stored = await area.get(Object.keys(DEFAULTS));
     return { ...DEFAULTS, ...(stored || {}) };
   } catch {
     return { ...DEFAULTS };
@@ -126,7 +127,10 @@ export async function migrateSettings() {
  */
 export function onSettingsChanged(callback) {
   if (!api.storage || !api.storage.onChanged) return () => {};
-  const handler = async (_changes, _areaName) => {
+  // ignore changes from the other area so we don't double-fire
+  const expectedArea = (api.storage && api.storage.sync) ? "sync" : "local";
+  const handler = async (_changes, areaName) => {
+    if (areaName !== expectedArea) return;
     callback(await readSettings());
   };
   api.storage.onChanged.addListener(handler);
