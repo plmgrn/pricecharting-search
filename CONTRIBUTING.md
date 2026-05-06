@@ -57,7 +57,7 @@ Open an issue. Include:
 
 ### Coding style
 - Plain ES modules, no build step, no framework.
-- Use the `browser`/`chrome` shim already in `src/background/index.js`;
+- Use the `browser`/`chrome` shim in `src/lib/api.js`;
   don't hard-code one namespace.
 - Keep the permissions footprint minimal. Any new permission needs a
   justification in the PR description.

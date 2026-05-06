@@ -15,6 +15,7 @@ pricecharting-search/
 ├── .editorconfig, .gitignore
 ├── package.json, web-ext-config.cjs       # Dev tooling (never shipped)
 ├── docs/                                   # Developer documentation
+├── media/                                  # Screenshots for store listings
 ├── .github/                                # Issue templates, CI
 └── src/                                    # Everything that ships
 ```
@@ -48,9 +49,8 @@ src/
     └── options.js
 ```
 
-Planned surfaces — each will appear as a sibling of `background/` when
-the corresponding feature lands:
-below so the layout is decided in advance:
+Planned surfaces — each will appear as a sibling of `background/`
+when the corresponding feature lands:
 
 ```
 src/
@@ -69,7 +69,7 @@ src/
 | `content/` | DOM-touching scripts injected into pages (e.g. reading the selection for keyboard shortcut). Kept tiny. | `lib/` (only pure modules) |
 | `lib/` | Pure modules: API shim, defaults, settings wrapper, URL templating. **No** listeners, **no** direct DOM access. Safe to import from any surface. | nothing project-specific |
 | `_locales/` | Browser-mandated i18n catalogs. | n/a |
-| `assets/` | Static assets shipped with the extension (icons, future SVGs, etc.). | n/a |
+| `icons/` | Extension icons (16–128 px PNGs). | n/a |
 
 ### Import direction
 
@@ -88,6 +88,7 @@ each other; if two surfaces need the same thing, it belongs in `lib/`.
 | File | Purpose |
 |---|---|
 | `architecture.md` | This file. Layout + conventions only. |
+| `privacy-policy.md` | Privacy policy for store listings. |
 | `pricecharting-url-reference.md` | URL parameter reference for the search-products endpoint. |
 
 Maintainer-only working notes (status, roadmap, internal TODOs) live in
@@ -100,7 +101,7 @@ the git-ignored `local/` folder and are not part of the published repo.
 | `ISSUE_TEMPLATE/bug_report.md` | Standard bug-report template. |
 | `ISSUE_TEMPLATE/feature_request.md` | Feature-request template. |
 | `ISSUE_TEMPLATE/commercial-license.md` | Backs the commercial-licensing contact channel listed in `NOTICE`. |
-| `workflows/ci.yml` | (Planned) lint + build on PRs. |
+| `workflows/ci.yml` | Lint + build on push/PR. |
 
 ## Tooling at the root
 
@@ -117,6 +118,7 @@ the git-ignored `local/` folder and are not part of the published repo.
 2. **Does it have a UI surface (own HTML page or popup)?** → its own folder under `src/` (`options/`, `popup/`, …).
 3. **Is it pure logic reusable across surfaces?** → `src/lib/`.
 4. **Does it touch the DOM of arbitrary web pages?** → `src/content/`, and it must be added to `manifest.json` with a justified host pattern.
-5. **Is it static (icon, image, json data)?** → `src/assets/`.
+5. **Is it static (icon, image, json data)?** → `src/icons/` (or a
+   future `src/assets/` if non-icon assets are needed).
 6. **New permission needed?** → manifest update **and** an explicit
    justification in the PR description.

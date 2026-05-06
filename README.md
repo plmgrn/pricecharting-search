@@ -1,29 +1,30 @@
-# Search on PriceCharting
+# <img src="src/icons/pricecharting-search_48x48.png" width="32" height="32" alt="icon"> Search on PriceCharting
 
-A browser *(currently chromium + firefox)* add-on to provide the functionality for searching pricecharting instantly?
+A browser extension (Chrome + Firefox) for searching PriceCharting instantly from any page.
 
-Have you ever had a hobby of game collecting? Have you scoured the internet in search of deals? Have you had the absolute displeasure of seeing a listing, highlighting the text and pressing search with this query, only to end up with no pricecharting results?
-
-Then **this add-on is just for you**. This *(for the time being)* simple add-on provides the additional option to search pricecharting with the query, opening a new tab with results for that article. This provides quick access for recent price history and versions of the article provided by pricecharting.
-
-The roadmap is something like follows:
-- Add settings for automatic region, currency etc.
-- Add functionality for recognizing platform from query.
-- Add a searchbar option for usage as a small querier, enabling having other pages in focus
-- Add entirely new add-on functionality using the pricecharting API
+Highlight text, right-click, and jump straight to PriceCharting results — prices, variants, and history in one click. Built for game collectors, card traders, and anyone tired of copy-pasting into a search bar.
 
 ## Features
 
-- Adds a single context-menu item that only appears when text is selected.
+- Right-click any selected text → *Search PriceCharting for "…"*.
 - Opens the result in a new tab next to the current one.
+- Configurable filters: category, console/platform, region, sort order, and more.
+- Options page with progressive disclosure (Basic → Additional → Experimental).
+- Dark/light mode follows the OS.
 - Zero tracking, zero remote code, hopefully more than zero results.
 
+## Roadmap
 
-## TODO add install instructions with links to per-browser add-on marketplaces
+- Recognise platform from query text automatically.
+- Toolbar popup with a quick-search bar.
+- Keyboard shortcut support.
+- PriceCharting API integration (v2).
 
+## Install
 
+<!-- TODO: add links once published on CWS / AMO -->
 
-## For open-source interested parties
+## Manual install (for developers)
 
 ### Chrome / Edge / Brave / Opera
 1. Download or clone this repository.
@@ -44,7 +45,8 @@ pricecharting-search/
 ├── README.md, LICENSE, NOTICE, CONTRIBUTING.md, CHANGELOG.md
 ├── .editorconfig, .gitignore
 ├── package.json, web-ext-config.cjs   # Dev tooling (never shipped)
-├── docs/                               # Developer docs (architecture, roadmap)
+├── docs/                               # Developer docs (architecture, URL reference)
+├── media/                              # Screenshots for store listings
 ├── .github/                            # Issue templates, CI
 └── src/                                # Everything that ships to browsers
     ├── manifest.json

@@ -72,8 +72,7 @@ export const DEFAULTS = Object.freeze({
   maxSelectionLength: 200,
 
   // Context-menu item title. `%s` is replaced by the browser with the
-  // (browser-truncated) selection text.
-  //todo: this should not be allowed to be empty, in case user accidentally empties field in settings
+  // (browser-truncated) selection text. Guarded against empty in options.js.
   menuTitle: 'Search PriceCharting for "%s"',
 
   // ── Advanced escape hatch ─────────────────────────────────────────
