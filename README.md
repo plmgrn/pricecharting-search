@@ -4,6 +4,21 @@ A browser extension (Chrome + Firefox) for searching PriceCharting instantly fro
 
 Highlight text, right-click, and jump straight to PriceCharting results — prices, variants, and history in one click. Built for game collectors, card traders, and anyone tired of copy-pasting into a search bar.
 
+## Install
+
+Install from your browser's **official extension store** — reviewed, signed, and auto-updated:
+
+[![Chrome](https://img.shields.io/badge/Chrome-Install-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/ceacaeigjpbjgaidagikpilbldjnnafk)
+[![Firefox](https://img.shields.io/badge/Firefox-Install-orange?logo=firefox&logoColor=white)](https://addons.mozilla.org/firefox/addon/search-on-pricecharting/)
+
+**Using Edge, Brave, or Opera?** These browsers are built on the same
+engine as Chrome, so they can install extensions directly from the
+Chrome Web Store — no workaround needed.
+
+[![Edge](https://img.shields.io/badge/Edge-Install-blue?logo=microsoftedge&logoColor=white)](https://chromewebstore.google.com/detail/ceacaeigjpbjgaidagikpilbldjnnafk)
+[![Brave](https://img.shields.io/badge/Brave-Install-blue?logo=brave&logoColor=white)](https://chromewebstore.google.com/detail/ceacaeigjpbjgaidagikpilbldjnnafk)
+[![Opera](https://img.shields.io/badge/Opera-Install-blue?logo=opera&logoColor=white)](https://chromewebstore.google.com/detail/ceacaeigjpbjgaidagikpilbldjnnafk)
+
 ## Features
 
 - Right-click any selected text → *Search PriceCharting for "…"*.
@@ -19,10 +34,6 @@ Highlight text, right-click, and jump straight to PriceCharting results — pric
 - Toolbar popup with a quick-search bar.
 - Keyboard shortcut support.
 - PriceCharting API integration (v2).
-
-## Install
-
-<!-- TODO: add links once published on CWS / AMO -->
 
 ## Manual install (for developers)
 
