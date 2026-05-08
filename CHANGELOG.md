@@ -32,7 +32,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Options page polish: help descriptions on all fields, dividers
   between filter groups, hint icon on variant editions, "Run setup
   again" link in footer.
-- Status indicator uses accent color and longer fade.
+- Unified colour system: all surfaces share a single
+  `colour-profiles.css` with browser-matched dark/light palettes.
+- Status indicator uses accent colour and longer fade.
+- Hardened input validation and error handling.
+
+### Fixed
+- Removed invalid `scripts` key from manifest `background` block —
+  Chrome Web Store rejects it in MV3. Restored alongside
+  `service_worker` for Firefox compatibility (both keys coexist).
+- Theme detection now reacts to OS dark/light mode changes while the
+  popup or options page is open.
+- Language names display correct diacritics (Español, Français,
+  Português) and proper Cyrillic script (Русский).
+- Added `minimum_chrome_version: 111` to manifest — required for
+  `color-mix()` CSS support.
+- Settings gear icon in popup now has `aria-hidden` for screen readers.
+- Console alias `x` no longer accidentally maps bare `x:query` to Xbox.
+- Options "Done" button falls back to `history.back()` when the tab
+  wasn't opened by script.
+- Popup and setup pages await `openOptionsPage()` before closing to
+  avoid a race condition.
+- Privacy policy now documents the `scripting` permission and custom
+  URL template behaviour.
+- Popup now has a `<title>` element for accessibility tools.
+- Removed dead CSS fallback for `--field-hover-bg` in popup.
+- Stale changelog entry about `action.onClicked` corrected (superseded
+  by popup in 1.2.0).
+- Architecture doc marks `content/` folder as planned, not present.
+- Roadmap item clarified: basic `platform:query` syntax exists; the
+  item now describes free-text auto-detection.
 
 ## [1.1.1] — 2026-05-06
 
@@ -61,11 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reserved scrollbar gutter so opening collapsibles doesn't shift
     the layout horizontally.
 - **Toolbar action**: `action` entry in the manifest declares the
-  toolbar button (which un-greys the icon in Firefox). The background
-  script handles `action.onClicked` by opening the options page via
-  `runtime.openOptionsPage()`. Future popup support is one manifest
-  line away — adding `default_popup` automatically suppresses the
-  click handler.
+  toolbar button (which un-greys the icon in Firefox). In 1.1.0 the
+  background script opened the options page on click; since 1.2.0 a
+  popup is shown instead (`default_popup` suppresses `onClicked`).
 - **Console enumeration** (`src/lib/consoles.js`): the full Console ID
   Table (~200 entries) extracted from PriceCharting's official API
   documentation, grouped by region (Americas / PAL / Japan / Asian
@@ -101,7 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue templates under `.github/ISSUE_TEMPLATE/`, including
   `commercial-license.md` to match the contact channel in `NOTICE`.
 
-## [1.0.0] — 2026
+## [1.0.0] — 2026-01-01
 
 ### Added
 - Initial release.
@@ -110,3 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cross-browser (`chrome` / `browser`) compatibility shim.
 - Firefox `gecko.id` set for AMO submission readiness.
 - AGPL-3.0 license + `NOTICE` with attribution and commercial-licensing terms.
+
+[1.2.0]: https://github.com/plmgrn/pricecharting-search/compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/plmgrn/pricecharting-search/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/plmgrn/pricecharting-search/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/plmgrn/pricecharting-search/releases/tag/v1.0.0

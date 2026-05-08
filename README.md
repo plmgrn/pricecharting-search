@@ -34,7 +34,8 @@ Chrome Web Store — no workaround needed.
 
 ## Roadmap
 
-- Recognise platform from query text automatically.
+- Auto-detect platform from free-text queries (beyond the existing
+  `platform:query` filter syntax).
 - PriceCharting API integration (v2). And everything that enables.
 - Game-name aliases and fuzzy matching in the query parser.
 
@@ -66,7 +67,8 @@ pricecharting-search/
     ├── manifest.json
     ├── background/                     # Service worker entry
     ├── icons/                          # 16/32/48/64/128 px PNGs
-    ├── lib/                            # Shared pure modules
+    ├── lib/                            # Pure modules (no DOM)
+    ├── shared/                         # Cross-surface CSS + theme detection
     ├── options/                        # Settings page
     ├── popup/                          # Toolbar action popup
     └── setup/                          # First-run setup wizard
