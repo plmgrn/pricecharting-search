@@ -76,6 +76,9 @@ export const DEFAULTS = Object.freeze({
   // (browser-truncated) selection text. Guarded against empty in options.js.
   menuTitle: 'Search PriceCharting for "%s"',
 
+  // Keyboard shortcut (Alt+S) is registered but disabled until opted in.
+  shortcutEnabled: false,
+
   // First-run setup page has been completed (or skipped).
   setupComplete: false,
 

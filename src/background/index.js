@@ -6,6 +6,8 @@
 //  2. On menu click: build the search URL from current settings and
 //     open it according to the user's preferred open-behavior.
 //  3. On settings change: refresh the menu title if it changed.
+//  4. Omnibox: type "price <query>" in the address bar to search.
+//  5. Keyboard shortcut: Alt+Shift+P to search the current selection.
 
 import { api } from "../lib/api.js";
 import { migrateSettings, readSettings, onSettingsChanged } from "../lib/settings.js";
@@ -79,6 +81,77 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
     console.warn("Failed to open result:", e);
   }
 });
+
+/* ── Keyboard shortcut ───────────────────────────────────── */
+
+if (api.commands) {
+  api.commands.onCommand.addListener(async (command) => {
+    if (command !== "search-selection") return;
+
+    const settings = await readSettings();
+    if (!settings.shortcutEnabled) return;
+
+    const [tab] = await api.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) return;
+
+    let results;
+    try {
+      results = await api.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.getSelection()?.toString() ?? "",
+      });
+    } catch {
+      // can't inject into chrome:// or other restricted pages
+      return;
+    }
+
+    const text = results?.[0]?.result;
+    if (!text) return;
+
+    const selection = normalizeSelection(text, settings);
+    const url = buildSearchUrl(selection, settings);
+    if (!url) return;
+
+    try {
+      await openResult(url, tab, settings);
+    } catch (e) {
+      console.warn("Keyboard shortcut search failed:", e);
+    }
+  });
+}
+
+/* ── Omnibox (address-bar keyword: "pchart") ───────────────────── */
+
+if (api.omnibox) {
+  // show a hint when the user activates the keyword
+  api.omnibox.setDefaultSuggestion({
+    description: "Search PriceCharting for %s",
+  });
+
+  api.omnibox.onInputEntered.addListener(async (text, disposition) => {
+    const settings = await readSettings();
+    const selection = normalizeSelection(text, settings);
+    const url = buildSearchUrl(selection, settings);
+    if (!url) return;
+
+    // disposition mirrors the user's intent (Enter / Ctrl+Enter / Shift+Enter)
+    try {
+      switch (disposition) {
+        case "currentTab":
+          await api.tabs.update(undefined, { url });
+          break;
+        case "newForegroundTab":
+          await api.tabs.create({ url, active: true });
+          break;
+        case "newBackgroundTab":
+          await api.tabs.create({ url, active: false });
+          break;
+      }
+    } catch (e) {
+      console.warn("Omnibox search failed:", e);
+    }
+  });
+}
 
 // Toolbar button. With no `default_popup` set in the manifest, clicks
 // fire `action.onClicked` here. For now this is the fast path to the
