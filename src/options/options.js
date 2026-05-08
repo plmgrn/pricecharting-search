@@ -7,7 +7,7 @@
 //   options tab, sync from another device) and refreshes the form.
 
 import { DEFAULTS } from "../lib/defaults.js";
-import { CONSOLES, CONSOLE_GROUPS } from "../lib/consoles.js";
+import { CONSOLES, CONSOLE_GROUPS, MAGAZINES } from "../lib/consoles.js";
 import {
   readSettings,
   writeSettings,
@@ -37,6 +37,9 @@ function readField(name) {
     return Number.isFinite(n) && el.value !== "" ? n : def;
   }
 
+  // empty text field with a placeholder means "keep the default"
+  if (el.value === "" && el.placeholder) return def;
+
   return el.value;
 }
 
@@ -49,10 +52,14 @@ function populate(settings) {
     const v = settings[name];
     if (el.type === "checkbox") {
       el.checked = !!v;
+    } else if (el.placeholder && String(v) === el.placeholder) {
+      el.value = "";
     } else {
       el.value = v == null ? "" : String(v);
     }
   }
+  // if consoleUid is a magazine, move it to the magazine dropdown
+  syncMagazineFromConsole(settings.consoleUid ?? "");
 }
 
 /** Read every form field into a settings patch. */
@@ -63,6 +70,9 @@ function collect() {
     const v = readField(name);
     if (v !== undefined) patch[name] = v;
   }
+  // magazine dropdown maps to consoleUid — wins when set
+  const mag = form.elements["magazineUid"];
+  if (mag && mag.value) patch.consoleUid = mag.value;
   return patch;
 }
 
@@ -75,8 +85,9 @@ function flashStatus(text) {
   if (statusTimer) clearTimeout(statusTimer);
   statusTimer = setTimeout(() => {
     statusEl.classList.remove("flash");
-    statusEl.textContent = "";
-  }, 1200);
+    // clear text after the fade-out transition finishes
+    setTimeout(() => { statusEl.textContent = ""; }, 400);
+  }, 2000);
 }
 
 /* ── Auto-save (debounced) ───────────────────────────────────────── */
@@ -91,7 +102,6 @@ function scheduleSave() {
       // don't let user save a blank menu title — context menu would be invisible
       if (!mergedSettings.menuTitle) {
         mergedSettings.menuTitle = DEFAULTS.menuTitle;
-        form.elements["menuTitle"].value = DEFAULTS.menuTitle;
       }
       await writeSettings(mergedSettings);
       flashStatus("Saved");
@@ -114,12 +124,29 @@ resetButton.addEventListener("click", async () => {
   flashStatus("Reset to defaults");
 });
 
+// On focus, seed placeholder-driven fields with their default so the
+// user can edit from the existing value instead of retyping it.
+// On blur, clear back to empty if the value still matches the default
+// so the greyed-out placeholder look returns.
+form.addEventListener("focusin", (e) => {
+  suppressExternalRefresh = true;
+  const el = e.target;
+  if (el.placeholder && el.value === "") {
+    el.value = el.placeholder;
+  }
+});
+form.addEventListener("focusout", (e) => {
+  suppressExternalRefresh = false;
+  const el = e.target;
+  if (el.placeholder && el.value === el.placeholder) {
+    el.value = "";
+  }
+});
+
 // Refresh the form if another tab/device changes settings while this
 // page is open. Avoid clobbering the field the user is currently
 // editing.
 let suppressExternalRefresh = false;
-form.addEventListener("focusin", () => { suppressExternalRefresh = true; });
-form.addEventListener("focusout", () => { suppressExternalRefresh = false; });
 
 onSettingsChanged((settings) => {
   if (suppressExternalRefresh) return;
@@ -128,11 +155,11 @@ onSettingsChanged((settings) => {
 
 // Initial load.
 (async () => {
-  populateGroupSelect();  //populate group/region dropdown
-  const localSettings = await readSettings(); //Fetch the user stored settings
-  //if settings exist for the selected region, fill console dropdown with that region
+  populateGroupSelect();
+  populateMagazineSelect();
+  const localSettings = await readSettings();
   populateConsoleSelect(localSettings.consoleGroup ?? "");
-  populate(localSettings);  //Populate the UI with local settings
+  populate(localSettings);
 })();
 
 
@@ -248,6 +275,55 @@ function populateGroupSelect() {
     opt.value = r;
     opt.textContent = r;
     sel.appendChild(opt);
+  }
+}
+
+/* ── Magazine dropdown (mutually exclusive with console) ────────── */
+
+/** Populate the magazine dropdown from the MAGAZINES list. */
+function populateMagazineSelect() {
+  const sel = form.elements["magazineUid"];
+  if (!sel) return;
+  for (const m of MAGAZINES) {
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = m.name;
+    sel.appendChild(opt);
+  }
+}
+
+/**
+ * On load, if the stored consoleUid is actually a magazine,
+ * reflect that in the magazine dropdown and clear the console one.
+ */
+function syncMagazineFromConsole(uid) {
+  const mag = form.elements["magazineUid"];
+  if (!uid || !mag) return;
+  const isMag = MAGAZINES.some(m => m.id === uid);
+  if (isMag) {
+    mag.value = uid;
+    const con = form.elements["consoleUid"];
+    if (con) con.value = "";
+  }
+}
+
+// mutual exclusivity: picking a magazine clears console, and vice versa
+{
+  const mag = form.elements["magazineUid"];
+  const con = form.elements["consoleUid"];
+  if (mag) {
+    mag.addEventListener("change", () => {
+      if (mag.value) {
+        if (con) con.value = "";
+      }
+      scheduleSave();
+    });
+  }
+  if (con) {
+    con.addEventListener("change", () => {
+      if (con.value && mag) mag.value = "";
+      scheduleSave();
+    });
   }
 }
 

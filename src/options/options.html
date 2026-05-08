@@ -33,6 +33,7 @@
             <option value="coins">Coins</option>
             <option value="lego-sets">LEGO</option>
           </select>
+          <small>Narrows search results to one category.</small>
         </label>
 
         <label class="field">
@@ -43,6 +44,7 @@
             <option value="pal">PAL / Europe</option>
             <option value="japan">Japan</option>
           </select>
+          <small>Filters results to your regional releases.</small>
         </label>
 
         <label class="field">
@@ -69,6 +71,7 @@
             <option value="price-highest">Price: high to low</option>
             <option value="change-dollar">Biggest price increase</option>
           </select>
+          <small>Controls the order of search results.</small>
         </label>
 
         <label class="field">
@@ -91,27 +94,37 @@
           <legend>More filters</legend>
 
           <label class="field">
-            <span class="label">Console Region (NTSC / PAL / JAPAN)</span>
+            <span class="label">Console region</span>
             <select name="consoleGroup">
               <option value="">(any)</option>
             </select>
+            <small>Filters the platform list below by region.</small>
           </label>
           <label class="field">
             <span class="label">Console / platform</span>
             <select name="consoleUid">
               <option value="">(any)</option>
             </select>
-            <small>
-              Only meaningful when category is <em>Video games</em>.
-              Region-specific releases (PAL/JP/Asian English) are
-              listed as separate consoles — if you set both Region
-              and Console, the Console wins.
-            </small>
+            <small>Pick a region above to shorten this list.</small>
           </label>
+
+          <hr class="divider">
+
+          <label class="field">
+            <span class="label">Magazine / publication</span>
+            <select name="magazineUid">
+              <option value="">(none)</option>
+            </select>
+            <small>Overrides the console selection above.</small>
+          </label>
+
+          <hr class="divider">
 
           <label class="field checkbox">
             <input type="checkbox" name="excludeVariants">
-            <span class="label">Hide variant editions</span>
+            <span class="label">Hide variant editions
+              <abbr class="hint-icon" title="Filters out reprints and alternate releases like Player's Choice or Greatest Hits.">?</abbr>
+            </span>
           </label>
 
           <label class="field checkbox">
@@ -143,7 +156,8 @@
 
           <label class="field">
             <span class="label">Maximum selection length</span>
-            <input type="number" name="maxSelectionLength" min="1" max="2000" step="1">
+            <input type="number" name="maxSelectionLength" min="1" max="2000" step="1"
+                   placeholder="200">
             <small>
               Selections longer than this are truncated before searching.
               Stops accidentally-huge selections from producing pathological URLs.
@@ -191,6 +205,7 @@
       <footer>
         <button type="button" id="reset-button">Reset to defaults</button>
         <span id="status" role="status" aria-live="polite"></span>
+        <a href="../setup/setup.html" id="setup-link" class="footer-link">Run setup again</a>
       </footer>
 
     </form>

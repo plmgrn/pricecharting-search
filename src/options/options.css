@@ -67,6 +67,11 @@ legend {
   display: block;
   margin: 0.85rem 0;
 }
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.25rem 0;
+}
 .field .label {
   display: block;
   font-weight: 500;
@@ -77,6 +82,10 @@ legend {
   margin-top: 0.25rem;
   color: var(--muted);
   font-size: 0.85em;
+}
+.hint-icon {
+  cursor: help;
+  color: var(--muted);
 }
 
 .field input[type="text"],
@@ -138,13 +147,13 @@ button:hover {
 }
 
 #status {
-  color: var(--muted);
+  color: var(--accent);
   font-size: 0.9em;
   min-height: 1.2em;
-  transition: opacity 0.2s;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 #status.flash {
-  color: var(--accent);
   opacity: 1;
 }
 
@@ -223,4 +232,11 @@ details.more .more-body > fieldset:last-child {
 
 details.experimental > summary {
   color: color-mix(in srgb, var(--accent) 70%, var(--fg));
+}
+
+.footer-link {
+  color: var(--muted);
+  font-size: 0.92em;
+  text-decoration: underline;
+  margin-left: auto;
 }

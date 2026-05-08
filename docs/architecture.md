@@ -43,10 +43,14 @@ src/
 │   ├── defaults.js       # DEFAULTS, SCHEMA_VERSION, constants
 │   ├── settings.js       # read/write/reset/migrate
 │   └── url-template.js   # normalizeSelection, buildSearchUrl
-└── options/
-    ├── options.html
-    ├── options.css
-    └── options.js
+├── options/
+│   ├── options.html
+│   ├── options.css
+│   └── options.js
+└── setup/
+    ├── setup.html
+    ├── setup.css
+    └── setup.js            # First-run setup wizard
 ```
 
 Planned surfaces — each will appear as a sibling of `background/`
@@ -65,6 +69,7 @@ src/
 |---|---|---|
 | `background/` | Service-worker lifecycle, event listeners (`onInstalled`, `contextMenus.onClicked`, `commands.onCommand`, `runtime.onMessage`). | `lib/` |
 | `options/` | Settings UI. HTML + JS + CSS only; no business logic. | `lib/` |
+| `setup/` | First-run setup wizard. Saves quick-start choices and marks setup complete. | `lib/` |
 | `popup/` | Toolbar action popup, if/when one is added. | `lib/` |
 | `content/` | DOM-touching scripts injected into pages (e.g. reading the selection for keyboard shortcut). Kept tiny. | `lib/` (only pure modules) |
 | `lib/` | Pure modules: API shim, defaults, settings wrapper, URL templating. **No** listeners, **no** direct DOM access. Safe to import from any surface. | nothing project-specific |
@@ -75,7 +80,8 @@ src/
 
 ```
 background/ ─┐
-options/    ─┼──► lib/
+options/    ─┤
+setup/      ─┼──► lib/
 popup/      ─┤
 content/    ─┘
 ```

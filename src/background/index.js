@@ -30,9 +30,17 @@ async function createOrUpdateMenu() {
   });
 }
 
-api.runtime.onInstalled.addListener(async () => {
+api.runtime.onInstalled.addListener(async (details) => {
   await migrateSettings();
   await createOrUpdateMenu();
+
+  // show the first-run setup page on fresh install
+  if (details.reason === "install") {
+    const settings = await readSettings();
+    if (!settings.setupComplete) {
+      api.tabs.create({ url: api.runtime.getURL("setup/setup.html") });
+    }
+  }
 });
 
 // Service workers can be killed and restarted; re-create the menu on

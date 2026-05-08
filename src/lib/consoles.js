@@ -268,5 +268,7 @@ export const CONSOLE_GROUPS = [
   "PAL",
   "Japan",
   "Asian English",
-  "Magazines & misc",
 ];
+
+// separated from CONSOLE_GROUPS — these aren't consoles
+export const MAGAZINES = CONSOLES.filter(c => c.group === "Magazines & misc");

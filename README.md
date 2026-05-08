@@ -64,7 +64,8 @@ pricecharting-search/
     ├── background/                     # Service worker entry
     ├── icons/                          # 16/32/48/64/128 px PNGs
     ├── lib/                            # Shared pure modules
-    └── options/                        # Settings page
+    ├── options/                        # Settings page
+    └── setup/                          # First-run setup wizard
 ```
 
 Planned: `popup/` (toolbar action popup), `content/` (content scripts).

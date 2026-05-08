@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-05-08
+
+### Added
+- **First-run setup page** — new installs open a quick-start wizard
+  (category, region, language) so users don't have to dig through
+  settings. Can be re-run from the options page footer.
+- **Magazine / publication filter** in Additional settings, mutually
+  exclusive with the console dropdown.
+- Placeholder fields (max selection length, context-menu title) now
+  seed with the default value on focus, so users can edit from the
+  existing text instead of retyping it.
+
+### Changed
+- Options page polish: help descriptions on all fields, dividers
+  between filter groups, hint icon on variant editions, "Run setup
+  again" link in footer.
+- Status indicator uses accent color and longer fade.
+
 ## [1.1.1] — 2026-05-06
 
 ### Fixed

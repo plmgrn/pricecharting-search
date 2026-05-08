@@ -76,6 +76,9 @@ export const DEFAULTS = Object.freeze({
   // (browser-truncated) selection text. Guarded against empty in options.js.
   menuTitle: 'Search PriceCharting for "%s"',
 
+  // First-run setup page has been completed (or skipped).
+  setupComplete: false,
+
   // ── Advanced escape hatch ─────────────────────────────────────────
   /**
    * If set to a non-empty string, this URL template is used verbatim
