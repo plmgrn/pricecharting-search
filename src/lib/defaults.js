@@ -79,6 +79,9 @@ export const DEFAULTS = Object.freeze({
   // Keyboard shortcut (Alt+S) is registered but disabled until opted in.
   shortcutEnabled: false,
 
+  // Auto-focus the search bar when the popup opens.
+  popupAutofocus: false,
+
   // First-run setup page has been completed (or skipped).
   setupComplete: false,
 

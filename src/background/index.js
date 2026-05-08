@@ -12,6 +12,7 @@
 import { api } from "../lib/api.js";
 import { migrateSettings, readSettings, onSettingsChanged } from "../lib/settings.js";
 import { buildSearchUrl, normalizeSelection } from "../lib/url-template.js";
+import { parseQuery, applyOverrides } from "../lib/query-parser.js";
 
 const MENU_ID = "pricecharting-search-selection";
 
@@ -70,8 +71,10 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== MENU_ID) return;
 
   const settings = await readSettings();
-  const selection = normalizeSelection(info.selectionText, settings);
-  const url = buildSearchUrl(selection, settings);
+  const parsed = parseQuery(info.selectionText);
+  const effective = applyOverrides(settings, parsed);
+  const selection = normalizeSelection(parsed.query, effective);
+  const url = buildSearchUrl(selection, effective);
   if (!url) return;
 
   // guard against bad custom-template URLs that tabs.create rejects
@@ -108,12 +111,14 @@ if (api.commands) {
     const text = results?.[0]?.result;
     if (!text) return;
 
-    const selection = normalizeSelection(text, settings);
-    const url = buildSearchUrl(selection, settings);
+    const parsed = parseQuery(text);
+    const effective = applyOverrides(settings, parsed);
+    const selection = normalizeSelection(parsed.query, effective);
+    const url = buildSearchUrl(selection, effective);
     if (!url) return;
 
     try {
-      await openResult(url, tab, settings);
+      await openResult(url, tab, effective);
     } catch (e) {
       console.warn("Keyboard shortcut search failed:", e);
     }
@@ -130,8 +135,10 @@ if (api.omnibox) {
 
   api.omnibox.onInputEntered.addListener(async (text, disposition) => {
     const settings = await readSettings();
-    const selection = normalizeSelection(text, settings);
-    const url = buildSearchUrl(selection, settings);
+    const parsed = parseQuery(text);
+    const effective = applyOverrides(settings, parsed);
+    const selection = normalizeSelection(parsed.query, effective);
+    const url = buildSearchUrl(selection, effective);
     if (!url) return;
 
     // disposition mirrors the user's intent (Enter / Ctrl+Enter / Shift+Enter)
@@ -153,19 +160,8 @@ if (api.omnibox) {
   });
 }
 
-// Toolbar button. With no `default_popup` set in the manifest, clicks
-// fire `action.onClicked` here. For now this is the fast path to the
-// settings page (Firefox otherwise greys out the icon and the user has
-// to dig through about:addons). Later this slot can host a popup with
-// quick filters / recent searches; the manifest entry is already in
-// place.
-if (api.action && api.action.onClicked) {
-  api.action.onClicked.addListener(() => {
-    if (api.runtime.openOptionsPage) {
-      api.runtime.openOptionsPage();
-    }
-  });
-}
+// Toolbar button opens the popup (set via default_popup in manifest).
+// action.onClicked no longer fires when a popup is configured.
 
 /**
  * Open the result URL according to settings.openBehavior.

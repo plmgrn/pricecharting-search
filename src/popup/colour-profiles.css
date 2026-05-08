@@ -1,0 +1,80 @@
+/* Colour profiles for the popup.
+ *
+ * Each profile maps to a browser + colour scheme combination.
+ * Activate a profile by adding a class to <html>:
+ *   chrome-dark, chrome-light, firefox-dark, firefox-light
+ *
+ * The default (no class) uses system colours via Canvas/Field/etc.
+ * Profiles override only what's needed.
+ */
+
+/* ── Default: system colours ──────────────────────────────── */
+:root {
+  --popup-bg: Canvas;
+  --popup-fg: CanvasText;
+  --popup-muted: GrayText;
+  --popup-field-bg: Field;
+  --popup-field-fg: FieldText;
+  --popup-btn-border: GrayText;
+  --popup-btn-fg: GrayText;
+  --popup-btn-hover-bg: color-mix(in srgb, CanvasText 8%, transparent);
+  --popup-btn-active-bg: color-mix(in srgb, CanvasText 14%, transparent);
+  --popup-accent: AccentColor;
+}
+
+/* ── Chrome dark ──────────────────────────────────────────── */
+:root.chrome-dark {
+  --popup-bg: #3c3c3c;
+  --popup-fg: #c7c7be;
+  --popup-muted: #8e8e8e;
+  --popup-field-bg: #282828;
+  --popup-field-fg: #c7c7be;
+  --popup-btn-border: #757575;
+  --popup-btn-fg: #c7c7c7;
+  --popup-btn-hover-bg: #505050;
+  --popup-btn-active-bg: #6c6c6c;
+  --popup-field-hover-bg: #3c3c3c;
+  --popup-accent: #8ab4f8;
+}
+
+/* ── Chrome light ─────────────────────────────────────────── */
+:root.chrome-light {
+  --popup-bg: #ffffff;
+  --popup-fg: #202124;
+  --popup-muted: #5f6368;
+  --popup-field-bg: #f1f3f4;
+  --popup-field-fg: #202124;
+  --popup-btn-border: #dadce0;
+  --popup-btn-fg: #5f6368;
+  --popup-btn-hover-bg: #e8eaed;
+  --popup-btn-active-bg: #dadce0;
+  --popup-accent: #1a73e8;
+}
+
+/* ── Firefox dark ─────────────────────────────────────────── */
+:root.firefox-dark {
+  --popup-bg: #2b2a33;
+  --popup-fg: #fbfbfe;
+  --popup-muted: #8f8f9d;
+  --popup-field-bg: #1c1b22;
+  --popup-field-fg: #fbfbfe;
+  --popup-btn-border: #8f8f9d;
+  --popup-btn-fg: #fbfbfe;
+  --popup-btn-hover-bg: #52525e;
+  --popup-btn-active-bg: #5b5b66;
+  --popup-accent: #00ddff;
+}
+
+/* ── Firefox light ────────────────────────────────────────── */
+:root.firefox-light {
+  --popup-bg: #f9f9fb;
+  --popup-fg: #15141a;
+  --popup-muted: #5b5b66;
+  --popup-field-bg: #ffffff;
+  --popup-field-fg: #15141a;
+  --popup-btn-border: #cfcfd8;
+  --popup-btn-fg: #5b5b66;
+  --popup-btn-hover-bg: #e0e0e6;
+  --popup-btn-active-bg: #cfcfd8;
+  --popup-accent: #0060df;
+}

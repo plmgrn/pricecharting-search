@@ -1,0 +1,89 @@
+/* Popup — compact, modern rounded design.
+ * Colours come from colour-profiles.css via --popup-* variables. */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 340px;
+  background: var(--popup-bg);
+}
+
+html {
+  /* Chrome renders a 1px transparent frame around popups for its
+     drop-shadow. A matching outline bleeds into that gap visually. */
+  outline: 1px solid var(--popup-bg);
+}
+
+body {
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--popup-bg);
+  color: var(--popup-fg);
+}
+
+.popup {
+  padding: 0.6rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+#query {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  background: var(--popup-field-bg);
+  color: var(--popup-field-fg);
+  border: none;
+  border-radius: 20px;
+  outline: none;
+  transition: background 0.2s ease;
+}
+#query:hover,
+#query:focus {
+  background: var(--popup-field-hover-bg, var(--popup-field-bg));
+}
+#query::placeholder {
+  color: var(--popup-muted);
+}
+
+#go, #options-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 1.1em;
+  line-height: 1;
+  background: transparent;
+  color: var(--popup-btn-fg);
+  border: 1px solid var(--popup-btn-border);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+}
+#go:hover, #options-btn:hover {
+  background: var(--popup-btn-hover-bg);
+}
+#go:active, #options-btn:active {
+  background: var(--popup-btn-active-bg);
+}
+
+#go svg, #options-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#options-btn {
+  color: var(--popup-btn-fg);
+}
+
