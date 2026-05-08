@@ -20,7 +20,7 @@ export function normalizeSelection(raw, settings) {
     s = s.trim().replace(/\s+/g, " ");
   }
   // hard ceiling of 2000 even if someone edits storage directly
-  const max = Math.min(2000, Math.max(0, settings.maxSelectionLength | 0));
+  const max = Math.min(2000, Math.max(0, Math.trunc(settings.maxSelectionLength) || 0));
   if (max > 0 && s.length > max) s = s.slice(0, max);
   return s;
 }

@@ -10,4 +10,4 @@
 
 /* global browser, chrome */
 
-export const api = (typeof browser !== "undefined") ? browser : chrome;
+export const api = globalThis.browser?.runtime ? browser : chrome;

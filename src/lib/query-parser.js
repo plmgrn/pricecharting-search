@@ -48,10 +48,8 @@ const KEYWORDS = Object.freeze({
   japan:      { key: "regionName", value: "japan" },
 
   // ── Sort ────────────────────────────────────────────────
-  latest:     { key: "sort", value: "name" },
-  newest:     { key: "sort", value: "name" },
   popular:    { key: "sort", value: "popularity" },
-  cheapest:   { key: "sort", value: "price-highest" },
+  alpha:      { key: "sort", value: "name" },
   expensive:  { key: "sort", value: "price-highest" },
   rising:     { key: "sort", value: "change-dollar" },
 
@@ -85,7 +83,6 @@ function buildConsoleAliases() {
 /**
  * Generate common abbreviations for console names.
  * @param {string} lower - lowercased name
- * @param {string} _original - original cased name (unused for now)
  * @returns {string[]}
  */
 function generateAbbreviations(lower) {
@@ -104,16 +101,23 @@ function generateAbbreviations(lower) {
   // "nintendo ds" → "nds", "ds"
   if (lower === "nintendo ds") { abbrevs.push("nds", "ds"); }
   if (lower === "nintendo 3ds") { abbrevs.push("3ds"); }
-  // "game boy" variants
+  // "game boy" variants — bare "gb" intentionally maps to the first
+  // matching CONSOLES entry (Americas GameBoy).
   if (lower.startsWith("gameboy")) {
     const suffix = lower.replace("gameboy", "").trim();
-    abbrevs.push("gb" + (suffix ? suffix[0] : ""));
+    if (suffix) {
+      abbrevs.push("gb" + suffix[0]);
+    } else {
+      abbrevs.push("gb");
+    }
   }
-  // "xbox 360" → "x360"
+  // "xbox 360" → "x360", "xbox360"
   if (lower.startsWith("xbox")) {
     const suffix = lower.replace("xbox", "").trim();
-    abbrevs.push("xbox" + suffix.replace(/\s/g, ""));
-    if (suffix) abbrevs.push("x" + suffix.replace(/\s/g, ""));
+    if (suffix) {
+      abbrevs.push("xbox" + suffix.replace(/\s/g, ""));
+      abbrevs.push("x" + suffix.replace(/\s/g, ""));
+    }
   }
   // "sega genesis" → "genesis"
   if (lower.startsWith("sega ")) {

@@ -55,12 +55,11 @@ if (api.runtime.onStartup) {
 
 // Refresh the menu when settings change (e.g. user edited menuTitle in
 // the options page, or sync pulled in changes from another device).
-// seed from stored settings so the first onSettingsChanged doesn't
-// wastefully recreate the menu when nothing actually changed
-let lastMenuTitle = undefined;
-readSettings().then(s => { lastMenuTitle = s.menuTitle; });
+let lastMenuTitle = null;
+const initTitle = readSettings().then(s => { lastMenuTitle = s.menuTitle; });
 
 onSettingsChanged(async (settings) => {
+  await initTitle; // ensure we have baseline before comparing
   if (settings.menuTitle !== lastMenuTitle) {
     lastMenuTitle = settings.menuTitle;
     await createOrUpdateMenu();
@@ -71,10 +70,8 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== MENU_ID) return;
 
   const settings = await readSettings();
-  const parsed = parseQuery(info.selectionText);
-  const effective = applyOverrides(settings, parsed);
-  const selection = normalizeSelection(parsed.query, effective);
-  const url = buildSearchUrl(selection, effective);
+  const selection = normalizeSelection(info.selectionText, settings);
+  const url = buildSearchUrl(selection, settings);
   if (!url) return;
 
   // guard against bad custom-template URLs that tabs.create rejects
@@ -111,14 +108,12 @@ if (api.commands) {
     const text = results?.[0]?.result;
     if (!text) return;
 
-    const parsed = parseQuery(text);
-    const effective = applyOverrides(settings, parsed);
-    const selection = normalizeSelection(parsed.query, effective);
-    const url = buildSearchUrl(selection, effective);
+    const selection = normalizeSelection(text, settings);
+    const url = buildSearchUrl(selection, settings);
     if (!url) return;
 
     try {
-      await openResult(url, tab, effective);
+      await openResult(url, tab, settings);
     } catch (e) {
       console.warn("Keyboard shortcut search failed:", e);
     }

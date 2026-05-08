@@ -15,8 +15,9 @@
 export const SCHEMA_VERSION = 1;
 
 /**
- * URL parameters always sent on every search, regardless of user
- * settings. Documented in `docs/pricecharting-url-reference.md`.
+ * URL parameters sent on every standard search. Skipped when a
+ * custom URL template is active (see `buildSearchUrl`).
+ * Documented in `docs/pricecharting-url-reference.md`.
  *
  * - type=prices            → the "show this item with all variants
  *                            and prices" view we want.
