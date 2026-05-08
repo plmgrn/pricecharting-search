@@ -41,24 +41,28 @@ src/
 │   ├── api.js            # browser/chrome shim
 │   ├── consoles.js       # Console ID table (~200 entries)
 │   ├── defaults.js       # DEFAULTS, SCHEMA_VERSION, constants
+│   ├── query-parser.js   # filter:query delimiter parser
 │   ├── settings.js       # read/write/reset/migrate
 │   └── url-template.js   # normalizeSelection, buildSearchUrl
 ├── options/
 │   ├── options.html
 │   ├── options.css
 │   └── options.js
+├── popup/
+│   ├── popup.html
+│   ├── popup.css
+│   ├── popup.js
+│   └── colour-profiles.css  # Browser/theme colour variables
 └── setup/
     ├── setup.html
     ├── setup.css
     └── setup.js            # First-run setup wizard
 ```
 
-Planned surfaces — each will appear as a sibling of `background/`
-when the corresponding feature lands:
+Planned surfaces:
 
 ```
 src/
-├── popup/            # Toolbar action popup
 ├── content/          # Content scripts
 └── _locales/         # i18n message catalogs
 ```
@@ -67,10 +71,10 @@ src/
 
 | Folder | Owns | Imports from |
 |---|---|---|
-| `background/` | Service-worker lifecycle, event listeners (`onInstalled`, `contextMenus.onClicked`, `commands.onCommand`, `runtime.onMessage`). | `lib/` |
+| `background/` | Service-worker lifecycle, event listeners (`onInstalled`, `contextMenus.onClicked`, `commands.onCommand`, `omnibox`, `runtime.onMessage`). | `lib/` |
 | `options/` | Settings UI. HTML + JS + CSS only; no business logic. | `lib/` |
 | `setup/` | First-run setup wizard. Saves quick-start choices and marks setup complete. | `lib/` |
-| `popup/` | Toolbar action popup, if/when one is added. | `lib/` |
+| `popup/` | Toolbar action popup with quick-search bar. Colour profiles for Chrome/Firefox light/dark. | `lib/` |
 | `content/` | DOM-touching scripts injected into pages (e.g. reading the selection for keyboard shortcut). Kept tiny. | `lib/` (only pure modules) |
 | `lib/` | Pure modules: API shim, defaults, settings wrapper, URL templating. **No** listeners, **no** direct DOM access. Safe to import from any surface. | nothing project-specific |
 | `_locales/` | Browser-mandated i18n catalogs. | n/a |

@@ -22,18 +22,21 @@ Chrome Web Store — no workaround needed.
 ## Features
 
 - Right-click any selected text → *Search PriceCharting for "…"*.
-- Opens the result in a new tab next to the current one.
+- **Toolbar popup** — click the icon for a quick search bar.
+- **Omnibox** — type `pchart` + Tab in the address bar.
+- **Keyboard shortcut** — `Alt+S` searches the selected text (opt-in).
+- **Inline filters** — `ps2,pal:god of war` overrides your defaults on the fly.
 - Configurable filters: category, console/platform, region, sort order, and more.
 - Options page with progressive disclosure (Basic → Additional → Experimental).
+- First-run setup wizard for quick onboarding.
 - Dark/light mode follows the OS.
 - Zero tracking, zero remote code, hopefully more than zero results.
 
 ## Roadmap
 
 - Recognise platform from query text automatically.
-- Toolbar popup with a quick-search bar.
-- Keyboard shortcut support.
-- PriceCharting API integration (v2).
+- PriceCharting API integration (v2). And everything that enables.
+- Game-name aliases and fuzzy matching in the query parser.
 
 ## Manual install (for developers)
 
@@ -65,10 +68,11 @@ pricecharting-search/
     ├── icons/                          # 16/32/48/64/128 px PNGs
     ├── lib/                            # Shared pure modules
     ├── options/                        # Settings page
+    ├── popup/                          # Toolbar action popup
     └── setup/                          # First-run setup wizard
 ```
 
-Planned: `popup/` (toolbar action popup), `content/` (content scripts).
+Planned: `content/` (content scripts), `_locales/` (i18n).
 
 See [`docs/architecture.md`](./docs/architecture.md) for the folder
 layout and conventions.

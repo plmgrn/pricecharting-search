@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] — 2026-05-08
 
 ### Added
+- **Toolbar popup** — click the extension icon to search directly
+  without selecting text first. Respects all filters and open-behavior
+  settings.
+- **Omnibox search** — type `pchart` in the address bar, press Tab,
+  then type your query to search PriceCharting instantly.
+- **Keyboard shortcut** (`Alt+S`, opt-in) — searches the current
+  text selection on PriceCharting.
+- **Query filter syntax** — prefix your search with comma-separated
+  keywords before a colon to override filters inline
+  (e.g. `ps2,pal:god of war`, `cards:pikachu`, `raw:zelda`).
+  Supports category, region, sort, platform aliases, and more.
 - **First-run setup page** — new installs open a quick-start wizard
   (category, region, language) so users don't have to dig through
   settings. Can be re-run from the options page footer.
