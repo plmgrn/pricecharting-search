@@ -1,16 +1,5 @@
-/* Setup page — same design language as options, but simpler. */
-
-:root {
-  color-scheme: light dark;
-  --bg: Canvas;
-  --fg: CanvasText;
-  --muted: GrayText;
-  --border: color-mix(in srgb, CanvasText 20%, transparent);
-  --field-bg: Field;
-  --field-fg: FieldText;
-  --accent: AccentColor;
-  --accent-fg: AccentColorText;
-}
+/* Setup page — same design language as options, but simpler.
+ * Colours come from the shared colour-profiles.css. */
 
 * { box-sizing: border-box; }
 
@@ -91,13 +80,13 @@ form {
   font: inherit;
   font-weight: 600;
   color: var(--accent-fg);
-  border: 2px;
-  border-color: antiquewhite;
+  background: var(--accent);
+  border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 .primary:hover {
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .skip-link {

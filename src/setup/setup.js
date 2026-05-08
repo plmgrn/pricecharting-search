@@ -5,7 +5,9 @@
 // can still revisit setup from the options page footer.
 
 import { api } from "../lib/api.js";
-import { writeSettings, resetSettings } from "../lib/settings.js";
+import { writeSettings } from "../lib/settings.js";
+import { DEFAULTS } from "../lib/defaults.js";
+import "../shared/detect-theme.js";
 
 const form = document.getElementById("setup-form");
 
@@ -20,12 +22,11 @@ function collect() {
 }
 
 async function saveAndFinish(patch) {
-  // reset to clean slate, then apply setup choices on top
-  await resetSettings();
-  await writeSettings({ ...patch, setupComplete: true });
+  // single atomic write — avoids race if page closes between calls
+  await writeSettings({ ...DEFAULTS, ...patch, setupComplete: true });
   // navigate to options so the user sees their full settings
   if (api.runtime.openOptionsPage) {
-    api.runtime.openOptionsPage();
+    await api.runtime.openOptionsPage();
   }
   window.close();
 }
@@ -43,10 +44,10 @@ document.getElementById("skip").addEventListener("click", async (e) => {
 });
 
 // "settings" link — go straight to options
-document.getElementById("open-settings").addEventListener("click", (e) => {
+document.getElementById("open-settings").addEventListener("click", async (e) => {
   e.preventDefault();
   if (api.runtime.openOptionsPage) {
-    api.runtime.openOptionsPage();
+    await api.runtime.openOptionsPage();
   }
   window.close();
 });

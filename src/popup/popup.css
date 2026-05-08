@@ -1,23 +1,23 @@
 /* Popup — compact, modern rounded design.
- * Colours come from colour-profiles.css via --popup-* variables. */
+ * Colours come from the shared colour-profiles.css. */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
   width: 340px;
-  background: var(--popup-bg);
+  background: var(--bg);
 }
 
 html {
   /* Chrome renders a 1px transparent frame around popups for its
      drop-shadow. A matching outline bleeds into that gap visually. */
-  outline: 1px solid var(--popup-bg);
+  outline: 1px solid var(--bg);
 }
 
 body {
   font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: var(--popup-bg);
-  color: var(--popup-fg);
+  background: var(--bg);
+  color: var(--fg);
 }
 
 .popup {
@@ -34,8 +34,8 @@ body {
   flex: 1;
   padding: 0.5rem 0.75rem;
   font: inherit;
-  background: var(--popup-field-bg);
-  color: var(--popup-field-fg);
+  background: var(--field-bg);
+  color: var(--field-fg);
   border: none;
   border-radius: 20px;
   outline: none;
@@ -43,10 +43,10 @@ body {
 }
 #query:hover,
 #query:focus {
-  background: var(--popup-field-hover-bg, var(--popup-field-bg));
+  background: var(--field-hover-bg);
 }
 #query::placeholder {
-  color: var(--popup-muted);
+  color: var(--muted);
 }
 
 #go, #options-btn {
@@ -56,8 +56,8 @@ body {
   font-size: 1.1em;
   line-height: 1;
   background: transparent;
-  color: var(--popup-btn-fg);
-  border: 1px solid var(--popup-btn-border);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-border);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -67,10 +67,10 @@ body {
   transition: border-color 0.15s, background 0.15s;
 }
 #go:hover, #options-btn:hover {
-  background: var(--popup-btn-hover-bg);
+  background: var(--btn-hover-bg);
 }
 #go:active, #options-btn:active {
-  background: var(--popup-btn-active-bg);
+  background: var(--btn-active-bg);
 }
 
 #go svg, #options-btn svg {
@@ -83,7 +83,12 @@ body {
   stroke-linejoin: round;
 }
 
+#go {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 #options-btn {
-  color: var(--popup-btn-fg);
+  color: var(--btn-fg);
 }
 

@@ -37,13 +37,16 @@ src/
 ├── background/
 │   └── index.js          # MV3 service worker entry
 ├── icons/                # Extension icons (16–128 px PNGs)
-├── lib/
+├── lib/                  # Pure modules — no DOM, no side effects
 │   ├── api.js            # browser/chrome shim
 │   ├── consoles.js       # Console ID table (~200 entries)
 │   ├── defaults.js       # DEFAULTS, SCHEMA_VERSION, constants
 │   ├── query-parser.js   # filter:query delimiter parser
 │   ├── settings.js       # read/write/reset/migrate
 │   └── url-template.js   # normalizeSelection, buildSearchUrl
+├── shared/               # Cross-surface assets that touch the DOM
+│   ├── colour-profiles.css # Browser/theme colour variables
+│   └── detect-theme.js    # Browser + scheme detection, applies profile class
 ├── options/
 │   ├── options.html
 │   ├── options.css
@@ -51,8 +54,7 @@ src/
 ├── popup/
 │   ├── popup.html
 │   ├── popup.css
-│   ├── popup.js
-│   └── colour-profiles.css  # Browser/theme colour variables
+│   └── popup.js
 └── setup/
     ├── setup.html
     ├── setup.css
@@ -71,11 +73,12 @@ src/
 
 | Folder | Owns | Imports from |
 |---|---|---|
-| `background/` | Service-worker lifecycle, event listeners (`onInstalled`, `contextMenus.onClicked`, `commands.onCommand`, `omnibox`, `runtime.onMessage`). | `lib/` |
-| `options/` | Settings UI. HTML + JS + CSS only; no business logic. | `lib/` |
-| `setup/` | First-run setup wizard. Saves quick-start choices and marks setup complete. | `lib/` |
-| `popup/` | Toolbar action popup with quick-search bar. Colour profiles for Chrome/Firefox light/dark. | `lib/` |
-| `content/` | DOM-touching scripts injected into pages (e.g. reading the selection for keyboard shortcut). Kept tiny. | `lib/` (only pure modules) |
+| `background/` | Service-worker lifecycle, event listeners (`onInstalled`, `contextMenus.onClicked`, `commands.onCommand`, `omnibox`). | `lib/` |
+| `options/` | Settings UI. HTML + JS + CSS only; no business logic. | `lib/`, `shared/` |
+| `setup/` | First-run setup wizard. Saves quick-start choices and marks setup complete. | `lib/`, `shared/` |
+| `popup/` | Toolbar action popup with quick-search bar. | `lib/`, `shared/` |
+| `shared/` | Cross-surface assets that touch the DOM: colour profiles CSS, theme detection JS. | nothing project-specific |
+| `content/` | *(planned)* DOM-touching scripts injected into pages (e.g. reading the selection for keyboard shortcut). Kept tiny. | `lib/` (only pure modules) |
 | `lib/` | Pure modules: API shim, defaults, settings wrapper, URL templating. **No** listeners, **no** direct DOM access. Safe to import from any surface. | nothing project-specific |
 | `_locales/` | Browser-mandated i18n catalogs. | n/a |
 | `icons/` | Extension icons (16–128 px PNGs). | n/a |
@@ -85,13 +88,16 @@ src/
 ```
 background/ ─┐
 options/    ─┤
-setup/      ─┼──► lib/
+setup/      ─┼──► lib/     (pure logic)
 popup/      ─┤
 content/    ─┘
+       └────────► shared/  (CSS + theme detection)
 ```
 
-`lib/` never imports from a surface folder. Surfaces never import from
-each other; if two surfaces need the same thing, it belongs in `lib/`.
+`lib/` never imports from a surface folder. `shared/` never imports from
+a surface folder. Surfaces never import from each other; if two surfaces
+need the same pure logic, it belongs in `lib/`; if they need shared DOM
+assets, it belongs in `shared/`.
 
 ## `docs/` — developer documentation
 
@@ -127,6 +133,7 @@ the git-ignored `local/` folder and are not part of the published repo.
 1. **Does it run in the browser?** → `src/`. Otherwise → root or `docs/`.
 2. **Does it have a UI surface (own HTML page or popup)?** → its own folder under `src/` (`options/`, `popup/`, …).
 3. **Is it pure logic reusable across surfaces?** → `src/lib/`.
+3b. **Is it reusable across surfaces but touches the DOM?** → `src/shared/`.
 4. **Does it touch the DOM of arbitrary web pages?** → `src/content/`, and it must be added to `manifest.json` with a justified host pattern.
 5. **Is it static (icon, image, json data)?** → `src/icons/` (or a
    future `src/assets/` if non-icon assets are needed).

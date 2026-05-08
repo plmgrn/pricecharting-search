@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Search on PriceCharting — Options</title>
+  <link rel="stylesheet" href="../shared/colour-profiles.css">
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
+  <span id="status" role="status" aria-live="polite"></span>
   <main>
     <header>
       <h1>Search on PriceCharting</h1>
@@ -52,11 +54,11 @@
           <select name="language">
             <option value="">English</option>
             <option value="de">Deutsch</option>
-            <option value="es">Espanol</option>
-            <option value="fr">Francais</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
             <option value="nl">Nederlands</option>
-            <option value="pt">Portugues</option>
-            <option value="ru">Pусский</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
           </select>
           <small>
             Changes the language of the PriceCharting results page.
@@ -123,7 +125,7 @@
           <label class="field checkbox">
             <input type="checkbox" name="excludeVariants">
             <span class="label">Hide variant editions
-              <abbr class="hint-icon" title="Filters out reprints and alternate releases like Player's Choice or Greatest Hits.">?</abbr>
+              <abbr class="hint-icon" tabindex="0" title="Filters out reprints and alternate releases like Player's Choice or Greatest Hits.">?</abbr>
             </span>
           </label>
 
@@ -232,8 +234,8 @@
       <!-- ========== Footer / actions ========== -->
       <footer>
         <button type="button" id="reset-button">Reset to defaults</button>
-        <span id="status" role="status" aria-live="polite"></span>
-        <a href="../setup/setup.html" id="setup-link" class="footer-link">Run setup again</a>
+        <a href="../setup/setup.html" id="setup-link" class="footer-link">Run setup wizard</a>
+        <button type="button" id="done-button" class="primary-btn">Done</button>
       </footer>
 
     </form>

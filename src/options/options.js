@@ -14,6 +14,7 @@ import {
   resetSettings,
   onSettingsChanged,
 } from "../lib/settings.js";
+import "../shared/detect-theme.js";
 
 const form = document.getElementById("settings-form");
 const statusEl = document.getElementById("status");
@@ -60,6 +61,15 @@ function populate(settings) {
   }
   // if consoleUid is a magazine, move it to the magazine dropdown
   syncMagazineFromConsole(settings.consoleUid ?? "");
+  markDefaultSelects();
+}
+
+/** Toggle .is-default on selects whose value matches DEFAULTS. */
+function markDefaultSelects() {
+  for (const select of form.querySelectorAll("select")) {
+    const def = DEFAULTS[select.name];
+    select.classList.toggle("is-default", select.value === String(def ?? ""));
+  }
 }
 
 /** Read every form field into a settings patch. */
@@ -85,8 +95,6 @@ function flashStatus(text) {
   if (statusTimer) clearTimeout(statusTimer);
   statusTimer = setTimeout(() => {
     statusEl.classList.remove("flash");
-    // clear text after the fade-out transition finishes
-    setTimeout(() => { statusEl.textContent = ""; }, 400);
   }, 2000);
 }
 
@@ -115,7 +123,8 @@ function scheduleSave() {
 /* ── Wiring ─────────────────────────────────────────────────────── */
 
 form.addEventListener("input", scheduleSave);
-form.addEventListener("change", scheduleSave);
+// change fires on <select> (may not get input in all browsers) — save + restyle
+form.addEventListener("change", () => { markDefaultSelects(); scheduleSave(); });
 
 resetButton.addEventListener("click", async () => {
   if (!confirm("Reset all settings to their defaults?")) return;
@@ -395,3 +404,10 @@ function setupCollapsible(details) {
 }
 
 document.querySelectorAll("details.more").forEach(setupCollapsible);
+
+// Done button — closes the options tab (or navigates back if opened via chrome://extensions)
+document.getElementById("done-button").addEventListener("click", () => {
+  window.close();
+  // window.close() is a no-op if the tab wasn't opened by script
+  setTimeout(() => history.back(), 100);
+});

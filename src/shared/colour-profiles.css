@@ -1,0 +1,97 @@
+/* Shared colour profiles.
+ *
+ * Single source of truth for the extension's colour scheme.
+ * Activate a profile by adding a class to <html>:
+ *   chrome-dark, chrome-light, firefox-dark, firefox-light
+ *
+ * Detection is handled by shared/detect-theme.js (import from any surface).
+ *
+ * Generic variables (--bg, --fg, --accent, etc.) are consumed by all surfaces.
+ */
+
+/* ── Default: system colours (fallback if detection fails) ── */
+:root {
+  color-scheme: light dark;
+
+  --bg: Canvas;
+  --fg: CanvasText;
+  --muted: GrayText;
+  --border: color-mix(in srgb, CanvasText 20%, transparent);
+  --field-bg: Field;
+  --field-fg: FieldText;
+  --field-hover-bg: color-mix(in srgb, CanvasText 6%, transparent);
+  --btn-border: GrayText;
+  --btn-fg: GrayText;
+  --btn-hover-bg: color-mix(in srgb, CanvasText 8%, transparent);
+  --btn-active-bg: color-mix(in srgb, CanvasText 14%, transparent);
+  --accent: AccentColor;
+  --accent-fg: AccentColorText;
+}
+
+/* ── Chrome dark ──────────────────────────────────────────── */
+:root.chrome-dark {
+  --bg: #3c3c3c;
+  --fg: #c7c7be;
+  --muted: #8e8e8e;
+  --border: #555555;
+  --field-bg: #282828;
+  --field-fg: #c7c7be;
+  --field-hover-bg: #3c3c3c;
+  --btn-border: #757575;
+  --btn-fg: #c7c7c7;
+  --btn-hover-bg: #505050;
+  --btn-active-bg: #6c6c6c;
+  --accent: #a8c7fa;
+  --accent-fg: #202124;
+}
+
+/* ── Chrome light ─────────────────────────────────────────── */
+:root.chrome-light {
+  --bg: #ffffff;
+  --fg: #202124;
+  --muted: #5f6368;
+  --border: #dadce0;
+  --field-bg: #f1f3f4;
+  --field-fg: #202124;
+  --field-hover-bg: #e8eaed;
+  --btn-border: #dadce0;
+  --btn-fg: #5f6368;
+  --btn-hover-bg: #e8eaed;
+  --btn-active-bg: #dadce0;
+  --accent: #1a73e8;
+  --accent-fg: #ffffff;
+}
+
+/* ── Firefox dark ─────────────────────────────────────────── */
+:root.firefox-dark {
+  --bg: #2b2a33;
+  --fg: #fbfbfe;
+  --muted: #8f8f9d;
+  --border: #5b5b66;
+  --field-bg: #1c1b22;
+  --field-fg: #fbfbfe;
+  --field-hover-bg: #42414d;
+  --btn-border: #8f8f9d;
+  --btn-fg: #fbfbfe;
+  --btn-hover-bg: #52525e;
+  --btn-active-bg: #5b5b66;
+  --accent: #00ddff;
+  --accent-fg: #15141a;
+}
+
+/* ── Firefox light ────────────────────────────────────────── */
+:root.firefox-light {
+  --bg: #f9f9fb;
+  --fg: #15141a;
+  --muted: #5b5b66;
+  --border: #cfcfd8;
+  --field-bg: #ffffff;
+  --field-fg: #15141a;
+  --field-hover-bg: #e0e0e6;
+  --btn-border: #cfcfd8;
+  --btn-fg: #5b5b66;
+  --btn-hover-bg: #e0e0e6;
+  --btn-active-bg: #cfcfd8;
+  --accent: #0060df;
+  --accent-fg: #ffffff;
+}
