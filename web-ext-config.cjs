@@ -13,6 +13,6 @@ module.exports = {
     overwriteDest: true
   },
   run: {
-    startUrl: ["https://www.pricecharting.com/"]
+    startUrl: ["https://github.com/plmgrn/pricecharting-search"]
   }
 };
