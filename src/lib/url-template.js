@@ -77,6 +77,12 @@ export function buildSearchUrl(selection, settings) {
 
   const url = new URL(SEARCH_BASE_URL);
 
+  // insert locale prefix (e.g. /de/, /fr/) before /search-products
+  const lang = (settings.language || "").trim();
+  if (lang) {
+    url.pathname = "/" + lang + url.pathname;
+  }
+
   // Always-sent params first so explicit settings can theoretically
   // override them (none currently do, but the order is intentional).
   for (const [k, v] of Object.entries(ALWAYS_SEND_PARAMS)) {

@@ -47,6 +47,7 @@ export const DEFAULTS = Object.freeze({
   consoleUid: "",           // e.g. "G2" (only meaningful when broadCategory=video-games)
   regionName: "",           // "ntsc" | "pal" | "japan" | ""
   sort: "popularity",       // "popularity" is PriceCharting's own default
+  language: "",              // locale path prefix: "de", "es", "fr", "nl", "pt", "ru", or "" (English)
   excludeVariants: false,   // hide variant editions when true
   showImages: true,         // thumbnails in result list
 

@@ -199,6 +199,25 @@ Region / currency / language are controlled by **cookies**, not URL
 parameters. Exposing them as settings would require the `cookies`
 permission, which is a privacy cost we don't want to pay yet.
 
+### Site language / locale
+
+PriceCharting offers localised versions of the site. The language is
+determined by a **path prefix**, not a subdomain or parameter:
+
+| Language | URL pattern |
+|---|---|
+| English (default) | `https://www.pricecharting.com/search-products?…` |
+| Deutsch | `https://www.pricecharting.com/de/search-products?…` |
+| Espanol | `https://www.pricecharting.com/es/search-products?…` |
+| Francais | `https://www.pricecharting.com/fr/search-products?…` |
+| Nederlands | `https://www.pricecharting.com/nl/search-products?…` |
+| Portugues | `https://www.pricecharting.com/pt/search-products?…` |
+| Pусский | `https://www.pricecharting.com/ru/search-products?…` |
+
+All query parameters work identically across locales — only the UI
+language changes. Implementation: insert the locale prefix between
+the domain and `/search-products` in the base URL.
+
 `region-name=` is *not* the same as the user's account region — it's a
 filter on what regional release of an item to show.
 
