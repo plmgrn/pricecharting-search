@@ -1,6 +1,6 @@
 {
   "name": "pricecharting-search",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "description": "Right-click selected text to look up its price on PriceCharting.com.",
   "license": "AGPL-3.0-only",
@@ -10,10 +10,10 @@
     "url": "https://github.com/plmgrn/pricecharting-search"
   },
   "scripts": {
-    "start:firefox": "web-ext run --source-dir=src",
-    "start:chrome": "web-ext run --source-dir=src -t chromium",
-    "lint": "web-ext lint --source-dir=src",
-    "build": "web-ext build --source-dir=src --overwrite-dest"
+    "start:firefox": "web-ext run",
+    "start:chrome": "web-ext run -t chromium",
+    "lint": "web-ext lint",
+    "build": "web-ext build"
   },
   "devDependencies": {
     "web-ext": "^8.0.0"
