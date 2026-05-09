@@ -7,7 +7,7 @@
 //     open it according to the user's preferred open-behavior.
 //  3. On settings change: refresh the menu title if it changed.
 //  4. Omnibox: type "price <query>" in the address bar to search.
-//  5. Keyboard shortcut: Alt+Shift+P to search the current selection.
+//  5. Keyboard shortcut: Alt+S to search the current selection.
 
 import { api } from "../lib/api.js";
 import { migrateSettings, readSettings, onSettingsChanged } from "../lib/settings.js";
