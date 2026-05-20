@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Combining a region and console filter (e.g. `jp,ds:zelda`) now
+  resolves to the region-specific console on PriceCharting instead of
+  the default Americas variant.
+- Selection length cap now defaults correctly when set to zero.
+- Added accessible label to the popup search field.
+
 ## [1.2.0] — 2026-05-08
 
 ### Added
@@ -38,9 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hardened input validation and error handling.
 
 ### Fixed
-- Removed invalid `scripts` key from manifest `background` block —
-  Chrome Web Store rejects it in MV3. Restored alongside
-  `service_worker` for Firefox compatibility (both keys coexist).
+- Removed invalid `scripts` key from the manifest `background` block.
+  Re-added `service_worker` for Firefox compatibility.
 - Theme detection now reacts to OS dark/light mode changes while the
   popup or options page is open.
 - Language names display correct diacritics (Español, Français,
