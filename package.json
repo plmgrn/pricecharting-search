@@ -1,6 +1,6 @@
 {
   "name": "pricecharting-search",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "Right-click selected text to look up its price on PriceCharting.com.",
   "license": "AGPL-3.0-only",
