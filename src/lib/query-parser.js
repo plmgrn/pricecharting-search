@@ -66,13 +66,13 @@ const KEYWORDS = Object.freeze({
  * e.g. "playstation 2" → G7, "gameboy color" → G2, "ps2" → G7
  */
 function buildConsoleAliases() {
-  const map = {};
+  const map = Object.create(null);
   for (const c of CONSOLES) {
     const lower = c.name.toLowerCase();
     map[lower] = c.id;
 
     // common abbreviation patterns
-    const abbrevs = generateAbbreviations(lower, c.name);
+    const abbrevs = generateAbbreviations(lower);
     for (const a of abbrevs) {
       if (!map[a]) map[a] = c.id;
     }
@@ -132,13 +132,103 @@ function generateAbbreviations(lower) {
 const CONSOLE_ALIASES = buildConsoleAliases();
 
 /**
+ * Region prefix used in CONSOLES names, keyed by regionName value.
+ */
+const REGION_PREFIX = Object.freeze({
+  japan: "JP ",
+  pal:   "PAL ",
+});
+
+/**
+ * Americas names that differ in other regions.
+ * Maps "Americas name" → { japan?: "JP name", pal?: "PAL name" }.
+ * Only entries where the regional name ≠ prefix + Americas name.
+ */
+const REGIONAL_NAME_OVERRIDES = Object.freeze({
+  "Sega Genesis":       { japan: "JP Sega Mega Drive",  pal: "PAL Sega Mega Drive" },
+  "Sega CD":            { japan: "JP Sega Mega CD",     pal: "PAL Sega Mega CD" },
+  "Sega 32X":           { japan: "JP Super 32X",        pal: "PAL Mega Drive 32X" },
+  "TurboGrafx-16":      { japan: "JP PC Engine" },
+  "TurboGrafx CD":      { japan: "JP PC Engine CD" },
+  "Sega Master System": { japan: "JP Sega Mark III" },
+});
+
+/**
+ * Map CONSOLES group → regionName value for detecting
+ * when a console is already region-specific.
+ */
+const REGION_FOR_GROUP = Object.freeze({
+  "Japan": "japan",
+  "PAL":   "pal",
+});
+
+/**
+ * When a region + console are both specified, swap the generic
+ * console-uid for the region-specific variant if one exists.
+ * e.g. region=japan + consoleUid=G5 (Nintendo DS) → G111 (JP Nintendo DS).
+ *
+ * Also handles edge cases:
+ * - Console already belongs to the requested region → just drop regionName.
+ * - Console belongs to a *different* region → swap to correct variant
+ *   by stripping the existing prefix first.
+ */
+function resolveRegionalConsole(overrides) {
+  const prefix = REGION_PREFIX[overrides.regionName];
+  if (!prefix || !overrides.consoleUid) return;
+
+  const base = CONSOLES.find(c => c.id === overrides.consoleUid);
+  if (!base) return;
+
+  const region = overrides.regionName;
+  const baseRegion = REGION_FOR_GROUP[base.group];
+
+  // console is already region-specific
+  if (baseRegion) {
+    if (baseRegion === region) {
+      // same region — blank it so user's stored region doesn't leak
+      overrides.regionName = "";
+      return;
+    }
+    // different region — strip existing prefix to get the bare name,
+    // then resolve from there
+    const existingPrefix = REGION_PREFIX[baseRegion];
+    if (existingPrefix && base.name.startsWith(existingPrefix)) {
+      const bareName = base.name.slice(existingPrefix.length);
+      // try override table, then direct prefix
+      const overrideLookup = Object.entries(REGIONAL_NAME_OVERRIDES)
+        .find(([, map]) => map[baseRegion] === base.name);
+      const americasName = overrideLookup?.[0] || bareName;
+      const overrideName = REGIONAL_NAME_OVERRIDES[americasName]?.[region];
+      const expectedName = overrideName || prefix + bareName;
+
+      const target = CONSOLES.find(c => c.name === expectedName);
+      if (target) {
+        overrides.consoleUid = target.id;
+        overrides.regionName = "";
+      }
+      return;
+    }
+  }
+
+  // Americas console — check explicit name overrides first, then prefix
+  const overrideName = REGIONAL_NAME_OVERRIDES[base.name]?.[region];
+  const expectedName = overrideName || prefix + base.name;
+
+  const target = CONSOLES.find(c => c.name === expectedName);
+  if (target) {
+    overrides.consoleUid = target.id;
+    overrides.regionName = "";
+  }
+}
+
+/**
  * Parse a raw query string using the `filters:query` delimiter syntax.
  *
  * @param {string} input - raw input from popup, omnibox, or selection
  * @returns {ParseResult}
  */
 export function parseQuery(input) {
-  const text = (input || "").trim();
+  const text = String(input ?? "").trim();
   const overrides = {};
   let raw = false;
   let query = text;
@@ -163,15 +253,15 @@ export function parseQuery(input) {
     }
 
     // check static keywords first
-    const kw = KEYWORDS[token];
-    if (kw) {
+    if (Object.hasOwn(KEYWORDS, token)) {
+      const kw = KEYWORDS[token];
       overrides[kw.key] = kw.value;
       continue;
     }
 
     // check console aliases
-    const consoleId = CONSOLE_ALIASES[token];
-    if (consoleId) {
+    if (Object.hasOwn(CONSOLE_ALIASES, token)) {
+      const consoleId = CONSOLE_ALIASES[token];
       overrides.consoleUid = consoleId;
       continue;
     }
@@ -180,6 +270,9 @@ export function parseQuery(input) {
     // (don't silently drop user's input)
     return { query: text, overrides: {}, raw: false };
   }
+
+  // swap to region-specific console-uid when both are present
+  resolveRegionalConsole(overrides);
 
   return { query, overrides, raw };
 }
