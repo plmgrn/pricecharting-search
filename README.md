@@ -34,10 +34,20 @@ Chrome Web Store — no workaround needed.
 
 ## Roadmap
 
+- Settings presets / profiles — save and switch between named filter
+  configurations. Enables multiple context-menu items per preset.
 - Auto-detect platform from free-text queries (beyond the existing
   `platform:query` filter syntax).
+- Localization (i18n) — translate UI strings via `chrome.i18n`.
+- Search history / recent searches in the popup.
+- Omnibox suggestions as you type.
+- Firefox for Android support.
+- Accessibility pass — full keyboard navigation, focus management,
+  screen reader coverage.
 - PriceCharting API integration (v2). And everything that enables.
 - Game-name aliases and fuzzy matching in the query parser.
+- Import/export settings as JSON.
+- Configurable context-menu label text.
 
 ## Manual install (for developers)
 
