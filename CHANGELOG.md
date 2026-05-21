@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Common console nicknames (ps1, psx, vita, sfc, megadrive, xbone,
+  switch, gc, 2ds, dsi, etc.) now work as filter keywords.
+
 ### Fixed
 - Console aliases like `mastersystem` and `gamegear` (without spaces)
   now resolve correctly.
 
 ### Internal
-- Added test suite (`node --test`) with 463 tests covering query
+- Added test suite (`node --test`) with 493 tests covering query
   parsing, console alias resolution, URL construction round-trips,
   and data integrity.
 - Wired `npm test` into CI (GitHub Actions, Node 22).
