@@ -9,7 +9,7 @@
  * Generic variables (--bg, --fg, --accent, etc.) are consumed by all surfaces.
  */
 
-/* ── Default: system colours (fallback if detection fails) ── */
+/* -- Default: system colours (fallback if detection fails) -- */
 :root {
   color-scheme: light dark;
 
@@ -28,7 +28,7 @@
   --accent-fg: AccentColorText;
 }
 
-/* ── Chrome dark ──────────────────────────────────────────── */
+/* -- Chrome dark -- */
 :root.chrome-dark {
   --bg: #3c3c3c;
   --fg: #c7c7be;
@@ -45,7 +45,7 @@
   --accent-fg: #202124;
 }
 
-/* ── Chrome light ─────────────────────────────────────────── */
+/* -- Chrome light -- */
 :root.chrome-light {
   --bg: #ffffff;
   --fg: #202124;
@@ -62,7 +62,7 @@
   --accent-fg: #ffffff;
 }
 
-/* ── Firefox dark ─────────────────────────────────────────── */
+/* -- Firefox dark -- */
 :root.firefox-dark {
   --bg: #2b2a33;
   --fg: #fbfbfe;
@@ -79,7 +79,7 @@
   --accent-fg: #15141a;
 }
 
-/* ── Firefox light ────────────────────────────────────────── */
+/* -- Firefox light -- */
 :root.firefox-light {
   --bg: #f9f9fb;
   --fg: #15141a;

@@ -1,7 +1,7 @@
 // Options page controller.
 //
 // - Loads current settings on open and populates the form.
-// - Auto-saves on any change (debounced) — no "Save" button.
+// - Auto-saves on any change (debounced), no "Save" button.
 // - Reset button restores DEFAULTS.
 // - Listens for storage changes from elsewhere (e.g. another open
 //   options tab, sync from another device) and refreshes the form.
@@ -80,13 +80,13 @@ function collect() {
     const v = readField(name);
     if (v !== undefined) patch[name] = v;
   }
-  // magazine dropdown maps to consoleUid — wins when set
+  // magazine dropdown maps to consoleUid, wins when set
   const mag = form.elements["magazineUid"];
   if (mag && mag.value) patch.consoleUid = mag.value;
   return patch;
 }
 
-/* ── Status indicator ───────────────────────────────────────────── */
+/* -- Status indicator -- */
 
 let statusTimer = null;
 function flashStatus(text) {
@@ -98,7 +98,7 @@ function flashStatus(text) {
   }, 2000);
 }
 
-/* ── Auto-save (debounced) ───────────────────────────────────────── */
+/* -- Auto-save (debounced) -- */
 
 let saveTimer = null;
 function scheduleSave() {
@@ -107,7 +107,7 @@ function scheduleSave() {
     try {
       const userSettings = collect();
       const mergedSettings = { ...DEFAULTS, ...userSettings };
-      // don't let user save a blank menu title — context menu would be invisible
+      // don't let user save a blank menu title, context menu would be invisible
       if (!mergedSettings.menuTitle) {
         mergedSettings.menuTitle = DEFAULTS.menuTitle;
       }
@@ -120,10 +120,10 @@ function scheduleSave() {
   }, 250);
 }
 
-/* ── Wiring ─────────────────────────────────────────────────────── */
+/* -- Wiring -- */
 
 form.addEventListener("input", scheduleSave);
-// change fires on <select> (may not get input in all browsers) — save + restyle
+// change fires on <select> (may not get input in all browsers), save + restyle
 form.addEventListener("change", () => { markDefaultSelects(); scheduleSave(); });
 
 resetButton.addEventListener("click", async () => {
@@ -185,15 +185,15 @@ if (groupSelect) {
 /**
  * After repopulating the console dropdown for a new group, try to
  * keep the user's selection if an equivalent console exists.
- * e.g. "PAL Super Nintendo" → Americas → "Super Nintendo".
+ * e.g. "PAL Super Nintendo" => Americas => "Super Nintendo".
  *
  * Strategy: strip known region prefixes from the old name, then look
  * for a console whose name ends with that base string. Not perfect
  * (some names diverge: "Sega Genesis" vs "Sega Mega Drive") but
  * covers the common case.
  *
- * @param {string} prevId - previously selected console-uid
- * @param {string} newGroup - the group we just switched to
+ * @param {string} prevId previously selected console-uid
+ * @param {string} newGroup is the group we just switched to
  */
 function tryRestoreConsole(prevId, newGroup) {
   if (!prevId) return; // was (any), nothing to match
@@ -221,8 +221,8 @@ function stripRegionPrefix(name) {
 }
 
 
-/** Build the console-uid <select> from CONSOLES, grouped by region. 
- * @param {string} region - if provided, only consoles from this region will be included
+/** Build the console-uid <select> from CONSOLES, grouped by region.
+ * @param {string} region limits consoles to this group when provided
 */
 function populateConsoleSelect(region = "") {
 
@@ -287,7 +287,7 @@ function populateGroupSelect() {
   }
 }
 
-/* ── Magazine dropdown (mutually exclusive with console) ────────── */
+/* -- Magazine dropdown (mutually exclusive with console) -- */
 
 /** Populate the magazine dropdown from the MAGAZINES list. */
 function populateMagazineSelect() {
@@ -336,7 +336,7 @@ function syncMagazineFromConsole(uid) {
   }
 }
 
-/* ── Collapsible <details> with smooth height animation ─────────────
+/* -- Collapsible <details> with smooth height animation --
  *
  * Native <details> snaps display:none on close, which kills any pure-
  * CSS height transition after the first cycle. We intercept the
@@ -381,7 +381,7 @@ function setupCollapsible(details) {
 
   function close() {
     animating = true;
-    // From auto → fixed px so we can transition to 0.
+    // from auto to fixed px so we can transition to 0
     body.style.height = body.scrollHeight + "px";
     void body.offsetHeight;
     body.style.height = "0px";
@@ -405,7 +405,7 @@ function setupCollapsible(details) {
 
 document.querySelectorAll("details.more").forEach(setupCollapsible);
 
-// Done button — closes the options tab (or navigates back if opened via chrome://extensions)
+// Done button, closes the options tab (or navigates back if opened via chrome://extensions)
 document.getElementById("done-button").addEventListener("click", () => {
   window.close();
   // window.close() is a no-op if the tab wasn't opened by script

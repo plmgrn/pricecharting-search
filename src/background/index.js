@@ -1,6 +1,6 @@
 // Background service worker / event-page entry point.
 //
-// Responsibilities (kept minimal — pure logic lives in lib/):
+// Responsibilities (kept minimal, pure logic lives in lib/):
 //  1. On install/update: run settings migration, register the context
 //     menu with the (possibly user-customized) title.
 //  2. On menu click: build the search URL from current settings and
@@ -19,7 +19,7 @@ const MENU_ID = "pricecharting-search-selection";
 async function createOrUpdateMenu() {
   const settings = await readSettings();
   // `contextMenus.create` throws on duplicate id, so remove first.
-  // `remove` rejects if it doesn't exist — swallow that.
+  // `remove` rejects if it doesn't exist, swallow that.
   try {
     await api.contextMenus.remove(MENU_ID);
   } catch { /* not present yet */ }
@@ -82,7 +82,7 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-/* ── Keyboard shortcut ───────────────────────────────────── */
+/* -- Keyboard shortcut ---------------------------------------- */
 
 if (api.commands) {
   api.commands.onCommand.addListener(async (command) => {
@@ -120,7 +120,7 @@ if (api.commands) {
   });
 }
 
-/* ── Omnibox (address-bar keyword: "pchart") ───────────────────── */
+/* -- Omnibox (address-bar keyword: "pchart") ---------------------- */
 
 if (api.omnibox) {
   // show a hint when the user activates the keyword

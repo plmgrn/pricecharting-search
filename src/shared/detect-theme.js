@@ -4,7 +4,7 @@
 // to <html>. Import this from any surface's JS to activate the
 // colour-profiles.css variables (both live in shared/).
 //
-// Side effect on import — intentional.
+// Side effect on import, intentional.
 
 const isFirefox = /Firefox/i.test(navigator.userAgent);
 const prefix = isFirefox ? "firefox" : "chrome";

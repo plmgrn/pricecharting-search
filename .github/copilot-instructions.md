@@ -45,6 +45,12 @@ Plain ES modules, no build step, no framework. Ship folder is `src/`.
 - Don't use `var`. Prefer `const`, use `let` when mutation is needed.
 - Don't create documentation files unless asked.
 - Don't commit generated files or `node_modules/`.
+- **No Unicode punctuation in code or comments.** Stick to plain ASCII.
+  No em dashes (`—`), arrows (`→`), box-drawing (`──`), fancy quotes
+  (`""`), or other characters that don't appear on a normal keyboard.
+  Use commas where an em dash would go, `=>` for arrows, and `--` for
+  visual separators. The only exception is user-visible strings where
+  the character is intentional (e.g. `…` in placeholder text).
 
 ## Documentation
 

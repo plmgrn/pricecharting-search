@@ -1,4 +1,4 @@
-/* Options page — minimal, system-font, dark/light aware.
+/* Options page, minimal, system-font, dark/light aware.
  * Colours come from the shared colour-profiles.css. */
 
 * { box-sizing: border-box; }
@@ -196,13 +196,13 @@ details.more > summary::after {
   transform-origin: center center;
 }
 details.more > summary::before {
-  /* Horizontal bar — always present, centered. */
+  /* Horizontal bar, always present, centered. */
   width: 0.75em;
   height: 1.5px;
   margin: -0.75px 0 0 -0.375em; /* center on (left, top) */
 }
 details.more > summary::after {
-  /* Vertical bar — same center, rotated. Retracts on open. */
+  /* Vertical bar, same center, rotated. Retracts on open. */
   width: 1.5px;
   height: 0.75em;
   margin: -0.375em 0 0 -0.75px; /* center on (left, top) */
@@ -219,7 +219,7 @@ details.more > summary:hover {
 
 /* Animated body. Height + opacity are driven by JS (see options.js)
    so we don't fight the <details> element's native display toggle.
-   No CSS open/close animation — JS sets inline styles and removes
+   No CSS open/close animation, JS sets inline styles and removes
    them when the transition ends. */
 .more-body {
   overflow: hidden;

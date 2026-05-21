@@ -23,7 +23,7 @@ function pickArea() {
 
 /**
  * Read effective settings (DEFAULTS overlaid with anything stored).
- * Never throws — on storage error, returns DEFAULTS.
+ * Never throws, on storage error returns DEFAULTS.
  *
  * @returns {Promise<object>}
  */
@@ -31,7 +31,7 @@ export async function readSettings() {
   const area = pickArea();
   if (!area) return { ...DEFAULTS };
   try {
-    // only read keys we know about — ignore stray data in the area
+    // only read keys we know about, ignore stray data in the area
     const stored = await area.get(Object.keys(DEFAULTS));
     return { ...DEFAULTS, ...(stored || {}) };
   } catch {
@@ -108,7 +108,7 @@ export async function migrateSettings() {
     // case 2: ... future migration here, no break.
     default:
       // Stored data is from a NEWER version than this code knows about
-      // (e.g. user downgraded the extension). Leave it alone — the
+      // (e.g. user downgraded the extension). Leave it alone, the
       // overlay-on-defaults read in readSettings() is forward-safe.
       return;
   }

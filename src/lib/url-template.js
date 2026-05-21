@@ -9,9 +9,9 @@ import { ALWAYS_SEND_PARAMS, SEARCH_BASE_URL } from "./defaults.js";
  * Normalize the user's selection: optionally trim & collapse
  * whitespace, then truncate to maxSelectionLength characters.
  *
- * @param {string} raw       Raw selection text from `info.selectionText`.
- * @param {object} settings  Effective settings (defaults merged with stored).
- * @returns {string}         Cleaned text, possibly empty.
+ * @param {string} raw       raw selection text from `info.selectionText`
+ * @param {object} settings  effective settings (defaults merged with stored)
+ * @returns {string}         cleaned text, possibly empty
  */
 export function normalizeSelection(raw, settings) {
   let s = raw == null ? "" : String(raw);
@@ -26,7 +26,7 @@ export function normalizeSelection(raw, settings) {
 }
 
 /**
- * Map of settings → URL parameter name. Listed here (not in defaults.js)
+ * Map of settings => URL parameter name. Listed here (not in defaults.js)
  * because it's a builder concern, not a default-value concern. A setting
  * with an empty string / null / undefined value is omitted entirely.
  */
@@ -66,11 +66,11 @@ export function buildSearchUrl(selection, settings) {
   const tmpl = (settings.customUrlTemplate || "").trim();
   if (tmpl) {
     if (!tmpl.includes("{q}")) {
-      // Misconfigured template — do not silently search the wrong URL.
+      // Misconfigured template, do not silently search the wrong URL.
       return null;
     }
     const resolved = tmpl.replace(/\{q\}/g, encodeURIComponent(selection));
-    // only allow http(s) — block javascript:, data:, etc.
+    // only allow http(s), block javascript:, data:, etc.
     if (!/^https?:\/\//i.test(resolved)) return null;
     return resolved;
   }

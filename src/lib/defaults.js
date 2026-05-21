@@ -19,9 +19,9 @@ export const SCHEMA_VERSION = 1;
  * custom URL template is active (see `buildSearchUrl`).
  * Documented in `docs/pricecharting-url-reference.md`.
  *
- * - type=prices            → the "show this item with all variants
- *                            and prices" view we want.
- * - ignore-preferences=true → ignore any cookied account preferences
+ * - type=prices             = the "show this item with all variants
+ *                             and prices" view we want.
+ * - ignore-preferences=true = ignore any cookied account preferences
  *                            so the same query yields the same results
  *                            on every machine.
  */
@@ -40,11 +40,11 @@ export const DEFAULTS = Object.freeze({
   // Schema version stamped into stored settings; do not edit by hand.
   schemaVersion: SCHEMA_VERSION,
 
-  // ── PriceCharting search filters ──────────────────────────────────
+  // -- PriceCharting search filters --
   // Empty string means "don't send this parameter at all" (i.e. no
   // filter). See docs/pricecharting-url-reference.md for valid values.
   broadCategory: "",        // e.g. "video-games", "trading-cards"
-  consoleGroup: "",         // UI-only — filters the console dropdown by region (maps to CONSOLE_GROUPS). Never sent as a URL param.
+  consoleGroup: "",         // UI-only, filters the console dropdown by region (maps to CONSOLE_GROUPS). Never sent as a URL param.
   consoleUid: "",           // e.g. "G2" (only meaningful when broadCategory=video-games)
   regionName: "",           // "ntsc" | "pal" | "japan" | ""
   sort: "popularity",       // "popularity" is PriceCharting's own default
@@ -52,7 +52,7 @@ export const DEFAULTS = Object.freeze({
   excludeVariants: false,   // hide variant editions when true
   showImages: true,         // thumbnails in result list
 
-  // ── Extension UX ──────────────────────────────────────────────────
+  // -- Extension UX --
   /**
    * Where the result tab opens.
    *  - "next"    : new tab immediately after the current one (current behavior)
@@ -86,7 +86,7 @@ export const DEFAULTS = Object.freeze({
   // First-run setup page has been completed (or skipped).
   setupComplete: false,
 
-  // ── Advanced escape hatch ─────────────────────────────────────────
+  // -- Advanced escape hatch --
   /**
    * If set to a non-empty string, this URL template is used verbatim
    * (with `{q}` replaced by the encoded selection) and ALL the

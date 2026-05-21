@@ -22,7 +22,7 @@ function collect() {
 }
 
 async function saveAndFinish(patch) {
-  // single atomic write — avoids race if page closes between calls
+  // single atomic write, avoids race if page closes between calls
   await writeSettings({ ...DEFAULTS, ...patch, setupComplete: true });
   // navigate to options so the user sees their full settings
   if (api.runtime.openOptionsPage) {
@@ -31,19 +31,19 @@ async function saveAndFinish(patch) {
   window.close();
 }
 
-// "Get started" — save choices and go to settings
+// "Get started", save choices and go to settings
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   await saveAndFinish(collect());
 });
 
-// "Skip" — defaults only
+// "Skip", defaults only
 document.getElementById("skip").addEventListener("click", async (e) => {
   e.preventDefault();
   await saveAndFinish({});
 });
 
-// "settings" link — go straight to options
+// "settings" link, go straight to options
 document.getElementById("open-settings").addEventListener("click", async (e) => {
   e.preventDefault();
   if (api.runtime.openOptionsPage) {

@@ -1,7 +1,7 @@
 // PriceCharting console-uid enumeration.
 //
-// Source: <https://www.pricecharting.com/api-documentation> →
-// "Reference Tables → Console ID Table".
+// Source: <https://www.pricecharting.com/api-documentation>
+// => "Reference Tables => Console ID Table".
 // These are documented as Marketplace API console IDs, but the search
 // URL's `console-uid` parameter uses the same identifiers (verified:
 // `G2` = GameBoy Color matches both surfaces).
@@ -12,14 +12,14 @@
 // Grouping note: PriceCharting tracks region-specific SKUs as separate
 // "consoles", so e.g. Playstation 2 (G7), JP Playstation 2 (G108) and
 // PAL Playstation 2 (G63) are three distinct IDs. The `regionName`
-// filter in this extension is independent — typically users will
+// filter in this extension is independent, typically users will
 // either pick a generic console-uid OR a region+console combination.
 
 /** @typedef {{ id: string, name: string, group: string }} Console */
 
 /** @type {Console[]} */
 export const CONSOLES = [
-  // ── Americas / default ─────────────────────────────────────────
+  // -- Americas / default --
   { group: "Americas", id: "G25",   name: "3DO" },
   { group: "Americas", id: "G36545",name: "Action Max" },
   { group: "Americas", id: "G46",   name: "Amiga" },
@@ -140,7 +140,7 @@ export const CONSOLES = [
   { group: "Americas", id: "G7585", name: "Xbox Series X" },
   { group: "Americas", id: "G44257",name: "ZX Spectrum" },
 
-  // ── PAL / Europe ───────────────────────────────────────────────
+  // -- PAL / Europe --
   { group: "PAL", id: "G68531",name: "PAL 3DO" },
   { group: "PAL", id: "G153",  name: "PAL Amiga CD32" },
   { group: "PAL", id: "G72181",name: "PAL Amstrad GX4000" },
@@ -188,7 +188,7 @@ export const CONSOLES = [
   { group: "PAL", id: "G95",   name: "PAL Xbox One" },
   { group: "PAL", id: "G7586", name: "PAL Xbox Series X" },
 
-  // ── Japan ──────────────────────────────────────────────────────
+  // -- Japan --
   { group: "Japan", id: "G68532",name: "JP 3DO" },
   { group: "Japan", id: "G112",  name: "JP GameBoy" },
   { group: "Japan", id: "G79",   name: "JP GameBoy Advance" },
@@ -232,7 +232,7 @@ export const CONSOLES = [
   { group: "Japan", id: "G126",  name: "JP Xbox One" },
   { group: "Japan", id: "G7587", name: "JP Xbox Series X" },
 
-  // ── Asian English ──────────────────────────────────────────────
+  // -- Asian English --
   { group: "Asian English", id: "G56638",name: "Asian English Nintendo 3DS" },
   { group: "Asian English", id: "G59682",name: "Asian English PSP" },
   { group: "Asian English", id: "G70756",name: "Asian English Playstation 2" },
@@ -245,7 +245,7 @@ export const CONSOLES = [
   { group: "Asian English", id: "G72899",name: "Asian English Xbox" },
   { group: "Asian English", id: "G79471",name: "Asian Xbox 360" },
 
-  // ── Magazines & misc ───────────────────────────────────────────
+  // -- Magazines & misc --
   { group: "Magazines & misc", id: "G77760",name: "Club Nintendo Magazine" },
   { group: "Magazines & misc", id: "G53043",name: "Dreamcast Magazine" },
   { group: "Magazines & misc", id: "G53047",name: "Electronic Gaming Monthly" },
@@ -270,5 +270,5 @@ export const CONSOLE_GROUPS = [
   "Asian English",
 ];
 
-// separated from CONSOLE_GROUPS — these aren't consoles
+// separated from CONSOLE_GROUPS, these aren't consoles
 export const MAGAZINES = CONSOLES.filter(c => c.group === "Magazines & misc");
