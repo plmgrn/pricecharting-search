@@ -14,6 +14,7 @@ pricecharting-search/
 ├── README.md, LICENSE, NOTICE, CONTRIBUTING.md, CHANGELOG.md
 ├── .editorconfig, .gitignore
 ├── package.json, web-ext-config.cjs       # Dev tooling (never shipped)
+├── test/                                   # Unit tests (node --test)
 ├── docs/                                   # Developer documentation
 ├── media/                                  # Screenshots for store listings
 ├── .github/                                # Issue templates, CI
@@ -99,6 +100,17 @@ a surface folder. Surfaces never import from each other; if two surfaces
 need the same pure logic, it belongs in `lib/`; if they need shared DOM
 assets, it belongs in `shared/`.
 
+## `test/` — unit tests
+
+Run with `npm test` (Node 22+, `node --test`). Pure-logic tests only,
+no browser APIs needed.
+
+| File | Covers |
+|---|---|
+| `consoles.test.mjs` | Data integrity: no duplicate IDs, valid groups, MAGAZINES subset. |
+| `query-parser.test.mjs` | Keyword parsing, console alias resolution, regional swaps, adversarial inputs, fuzz. |
+| `url-template.test.mjs` | Selection normalization, URL construction, custom templates, round-trip deconstruction. |
+
 ## `docs/` — developer documentation
 
 | File | Purpose |
@@ -117,7 +129,7 @@ the git-ignored `local/` folder and are not part of the published repo.
 | `ISSUE_TEMPLATE/bug_report.md` | Standard bug-report template. |
 | `ISSUE_TEMPLATE/feature_request.md` | Feature-request template. |
 | `ISSUE_TEMPLATE/commercial-license.md` | Backs the commercial-licensing contact channel listed in `NOTICE`. |
-| `workflows/ci.yml` | Lint + build on push/PR. |
+| `workflows/ci.yml` | Test + lint + build on push/PR. |
 
 ## Tooling at the root
 

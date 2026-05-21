@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Console aliases like `mastersystem` and `gamegear` (without spaces)
+  now resolve correctly.
+
+### Internal
+- Added test suite (`node --test`) with 463 tests covering query
+  parsing, console alias resolution, URL construction round-trips,
+  and data integrity.
+- Wired `npm test` into CI (GitHub Actions, Node 22).
+- Added `"type": "module"` to package.json.
+
 ## [1.2.1] — 2026-05-20
 
 ### Fixed
