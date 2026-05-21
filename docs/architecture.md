@@ -40,6 +40,7 @@ src/
 ├── icons/                # Extension icons (16–128 px PNGs)
 ├── lib/                  # Pure modules — no DOM, no side effects
 │   ├── api.js            # browser/chrome shim
+│   ├── console-aliases.js # Curated nickname-to-ID mappings
 │   ├── consoles.js       # Console ID table (~200 entries)
 │   ├── defaults.js       # DEFAULTS, SCHEMA_VERSION, constants
 │   ├── query-parser.js   # filter:query delimiter parser

@@ -14,6 +14,7 @@
 // Pure module, no DOM, no side effects.
 
 import { CONSOLES } from "./consoles.js";
+import { MANUAL_ALIASES } from "./console-aliases.js";
 
 /**
  * @typedef {{ query: string, overrides: Record<string, string|boolean>, raw: boolean }} ParseResult
@@ -62,53 +63,8 @@ const KEYWORDS = Object.freeze({
   images:     { key: "showImages", value: true },
 });
 
-//TODO: add a curated MANUAL_ALIASES map for nicknames and alternative names
-// that generateAbbreviations can't derive algorithmically.
-//
-// Architecture:
-//   1. Add a MANUAL_ALIASES constant here (or in its own lib/console-aliases.js
-//      if the list grows large). Plain object, frozen, mapping lowercase
-//      alias string -> CONSOLES id:
-//
-//        const MANUAL_ALIASES = Object.freeze({
-//          "ps1":          "G6",
-//          "psone":        "G6",
-//          "psx":          "G6",
-//          "playstation1": "G6",
-//          "famicom":      "G3",   // Nintendo / Family Computer
-//          "nes":          "G3",
-//          "fc":           "G3",
-//          "megadrive":    "G15",  // Sega Genesis in Americas
-//          "md":           "G15",
-//          "sfc":          "G13",  // Super Nintendo / Super Famicom
-//          "gba sp":       "G1",   // still a GBA
-//          "dsi":          "G5",   // still a DS
-//          "2ds":          "G39",  // plays 3DS games
-//          "xbone":        "G47",  // Xbox One
-//          "xb1":          "G47",
-//          "xsx":          "G7469", // Xbox Series X
-//          "gc":           "G8",   // GameCube
-//          "wii u":        "G19",  // commonly no space: "wiiu"
-//          "wiiu":         "G19",
-//          "switch":       "G59",
-//          "vita":         "G43",
-//          "psp":          "G35",
-//        });
-//
-//   2. In buildConsoleAliases(), merge MANUAL_ALIASES into the map
-//      *after* the auto-generated entries, so curated aliases win ties.
-//
-//   3. Tests: add a "manual aliases" describe block that iterates every
-//      entry in MANUAL_ALIASES and asserts parseQuery resolves to the
-//      expected ID. Export MANUAL_ALIASES for testability.
-//
-//   4. Workflow for adding new aliases:
-//      - Grep extension reviews / GitHub issues for "I typed X but it
-//        didn't find the console" reports.
-//      - Add the alias to MANUAL_ALIASES, add a test, done.
-//      - Keep generateAbbreviations for pattern-based stuff (ps+suffix,
-//        sega-strip, xbox-strip, etc.), use MANUAL_ALIASES for one-offs
-//        and cultural nicknames that no algorithm can predict.
+// Curated nickname aliases live in console-aliases.js.
+// They're merged after auto-generated abbreviations so they win ties.
 
 /**
  * Build a console alias lookup from the CONSOLES array.
@@ -127,6 +83,12 @@ function buildConsoleAliases() {
       if (!map[a]) map[a] = c.id;
     }
   }
+
+  // curated aliases override auto-generated ones
+  for (const [alias, id] of Object.entries(MANUAL_ALIASES)) {
+    map[alias] = id;
+  }
+
   return Object.freeze(map);
 }
 

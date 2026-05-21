@@ -7,6 +7,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { parseQuery, applyOverrides } from "../src/lib/query-parser.js";
 import { CONSOLES } from "../src/lib/consoles.js";
+import { MANUAL_ALIASES } from "../src/lib/console-aliases.js";
 import { DEFAULTS } from "../src/lib/defaults.js";
 
 // -- helpers --
@@ -633,6 +634,25 @@ describe("fuzz - parseQuery never throws", () => {
 });
 
 // -- Kitchen sink --
+
+describe("manual aliases", () => {
+  const CONSOLE_BY_ID = Object.fromEntries(CONSOLES.map(c => [c.id, c.name]));
+
+  for (const [alias, expectedId] of Object.entries(MANUAL_ALIASES)) {
+    test(`"${alias}" => ${CONSOLE_BY_ID[expectedId] || expectedId}`, () => {
+      const r = parseQuery(`${alias}:test`);
+      assert.equal(r.overrides.consoleUid, expectedId);
+      assert.equal(r.query, "test");
+    });
+  }
+
+  test("manual alias IDs all exist in CONSOLES", () => {
+    const ids = new Set(CONSOLES.map(c => c.id));
+    for (const [alias, id] of Object.entries(MANUAL_ALIASES)) {
+      assert.ok(ids.has(id), `alias "${alias}" points to unknown ID "${id}"`);
+    }
+  });
+});
 
 describe("kitchen sink", () => {
   test("all override types at once", () => {
