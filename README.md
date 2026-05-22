@@ -1,6 +1,7 @@
 # <img src="src/icons/pricecharting-search_48x48.png" width="32" height="32" alt="icon"> Search on PriceCharting
 
-A browser extension (Chrome + Firefox) for searching PriceCharting instantly from any page.
+A browser extension for searching PriceCharting instantly from any page.
+Works on Chrome, Firefox, Edge, Brave, Opera, Vivaldi, and Arc.
 
 Highlight text, right-click, and jump straight to PriceCharting results — prices, variants, and history in one click. Built for game collectors, card traders, and anyone tired of copy-pasting into a search bar.
 
@@ -75,6 +76,7 @@ pricecharting-search/
 ├── .github/                            # Issue templates, CI
 └── src/                                # Everything that ships to browsers
     ├── manifest.json
+    ├── _locales/                       # i18n string catalogs
     ├── background/                     # Service worker entry
     ├── icons/                          # 16/32/48/64/128 px PNGs
     ├── lib/                            # Pure modules (no DOM)
@@ -84,7 +86,7 @@ pricecharting-search/
     └── setup/                          # First-run setup wizard
 ```
 
-Planned: `content/` (content scripts), `_locales/` (i18n).
+Planned: `content/` (content scripts).
 
 See [`docs/architecture.md`](./docs/architecture.md) for the folder
 layout and conventions.

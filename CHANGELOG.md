@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New query-parser keywords: `mtg`, `yugioh` (trading cards), `manga`
   (comics), `toys` (funko/pops), `cheap` (price-lowest), `newest`
   (date-added), `asc` (alphabetical), `desc` (price-highest).
+- More keyword synonyms: `vg` (video-games), `magic`, `lorcana`,
+  `onepiece` (trading cards), `figures` (funko-pops), `aus`, `uk`
+  (PAL region), `american` (NTSC), `japanese` (Japan), `az` (alpha
+  sort), `pricey` (price-highest), `budget` (price-lowest),
+  `trending`, `recent`, `latest` (date-added).
+- Console aliases: `dc` (Dreamcast), `sms` (Master System), `gg`
+  (Game Gear), `fc` (Famicom), `xss`/`series s`/`series x` (Xbox
+  Series X), `2600`, `7800` (Atari).
 - Options page warns when a custom URL template is missing the
   required `{q}` placeholder.
 
@@ -27,9 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from accumulating in storage.
 
 ### Internal
-- Added test suite (`node --test`) with 516 tests covering query
+- Added test suite (`node --test`) with 571 tests covering query
   parsing, console alias resolution, URL construction round-trips,
   data integrity, and settings persistence.
+- ESLint config (`.eslintrc.json`) with WebExtension-aware environment
+  settings. Source passes clean. Wired into `npm run lint`.
+- Extension name and description now use `chrome.i18n` message
+  references (`__MSG_*__`) via `_locales/en/messages.json`.
 - Wired `npm test` into CI (GitHub Actions, Node 22).
 - Added `"type": "module"` to package.json.
 

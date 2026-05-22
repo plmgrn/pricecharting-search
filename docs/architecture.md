@@ -35,6 +35,9 @@ Current layout:
 ```
 src/
 ├── manifest.json
+├── _locales/
+│   └── en/
+│       └── messages.json   # i18n strings (extension name, description)
 ├── background/
 │   └── index.js          # MV3 service worker entry
 ├── icons/                # Extension icons (16–128 px PNGs)
