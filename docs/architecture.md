@@ -110,6 +110,7 @@ no browser APIs needed.
 |---|---|
 | `consoles.test.mjs` | Data integrity: no duplicate IDs, valid groups, MAGAZINES subset. |
 | `query-parser.test.mjs` | Keyword parsing, console alias resolution, regional swaps, adversarial inputs, fuzz. |
+| `settings.test.mjs` | Read/write/reset, schema migration, change subscription, area fallback. |
 | `url-template.test.mjs` | Selection normalization, URL construction, custom templates, round-trip deconstruction. |
 
 ## `docs/` — developer documentation

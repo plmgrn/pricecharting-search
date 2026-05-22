@@ -10,15 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Common console nicknames (ps1, psx, vita, sfc, megadrive, xbone,
   switch, gc, 2ds, dsi, etc.) now work as filter keywords.
+- New query-parser keywords: `mtg`, `yugioh` (trading cards), `manga`
+  (comics), `toys` (funko/pops), `cheap` (price-lowest), `newest`
+  (date-added), `asc` (alphabetical), `desc` (price-highest).
+- Options page warns when a custom URL template is missing the
+  required `{q}` placeholder.
 
 ### Fixed
 - Console aliases like `mastersystem` and `gamegear` (without spaces)
   now resolve correctly.
+- Firefox detection in theme module no longer relies on user-agent
+  sniffing, uses the same runtime check as the API shim.
+- Collapsible sections in the options page can no longer get stuck
+  mid-animation if the CSS transition is interrupted.
+- Settings writes now filter out unknown keys, preventing stray data
+  from accumulating in storage.
 
 ### Internal
-- Added test suite (`node --test`) with 493 tests covering query
+- Added test suite (`node --test`) with 516 tests covering query
   parsing, console alias resolution, URL construction round-trips,
-  and data integrity.
+  data integrity, and settings persistence.
 - Wired `npm test` into CI (GitHub Actions, Node 22).
 - Added `"type": "module"` to package.json.
 
