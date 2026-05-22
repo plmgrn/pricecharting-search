@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Search on PriceCharting",
+  "name": "__MSG_extensionName__",
   "version": "1.2.1",
-  "description": "Right-click selected text to look up its price on PriceCharting.com.",
+  "default_locale": "en",
+  "description": "__MSG_extensionDescription__",
   "homepage_url": "https://github.com/plmgrn/pricecharting-search",
   "author": "Otto Palmgren",
   "omnibox": { "keyword": "pchart" },
@@ -11,7 +12,7 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Search PriceCharting for selected text"
+      "description": "__MSG_searchSelectionDescription__"
     }
   },
   "permissions": ["contextMenus", "storage", "activeTab", "scripting"],

@@ -1,0 +1,14 @@
+{
+  "extensionName": {
+    "message": "Search on PriceCharting",
+    "description": "The display name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Right-click selected text to look up its price on PriceCharting.com.",
+    "description": "The description of the extension."
+  },
+  "searchSelectionDescription": {
+    "message": "Search PriceCharting for selected text",
+    "description": "Description for the keyboard shortcut command."
+  }
+}
