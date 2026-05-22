@@ -6,7 +6,10 @@
 //
 // Side effect on import, intentional.
 
-const isFirefox = /Firefox/i.test(navigator.userAgent);
+import { api } from "../lib/api.js";
+
+// consistent with api.js: browser.runtime exists only in Firefox
+const isFirefox = api === globalThis.browser;
 const prefix = isFirefox ? "firefox" : "chrome";
 const mql = window.matchMedia("(prefers-color-scheme: dark)");
 
