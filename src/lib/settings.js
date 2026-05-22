@@ -49,7 +49,12 @@ export async function readSettings() {
 export async function writeSettings(patch) {
   const area = pickArea();
   if (!area) return;
-  await area.set({ ...patch, schemaVersion: SCHEMA_VERSION });
+  const clean = {};
+  for (const k of Object.keys(patch)) {
+    if (Object.hasOwn(DEFAULTS, k)) clean[k] = patch[k];
+  }
+  clean.schemaVersion = SCHEMA_VERSION;
+  await area.set(clean);
 }
 
 /**

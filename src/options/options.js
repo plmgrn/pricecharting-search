@@ -122,9 +122,25 @@ function scheduleSave() {
 
 /* -- Wiring -- */
 
-form.addEventListener("input", scheduleSave);
+form.addEventListener("input", (e) => {
+  if (e.target.name === "customUrlTemplate") validateTemplate();
+  scheduleSave();
+});
 // change fires on <select> (may not get input in all browsers), save + restyle
 form.addEventListener("change", () => { markDefaultSelects(); scheduleSave(); });
+
+/** Warn if custom URL template is non-empty but missing {q}. */
+function validateTemplate() {
+  const el = form.elements["customUrlTemplate"];
+  if (!el) return;
+  const val = el.value.trim();
+  if (val && !val.includes("{q}")) {
+    el.setCustomValidity("Template must contain {q} as a placeholder for the search query.");
+    el.reportValidity();
+  } else {
+    el.setCustomValidity("");
+  }
+}
 
 resetButton.addEventListener("click", async () => {
   if (!confirm("Reset all settings to their defaults?")) return;
@@ -359,40 +375,52 @@ function setupCollapsible(details) {
   body.style.opacity = details.open ? "1" : "0";
   body.style.height = details.open ? "auto" : "0px";
 
+  // safety net if transitionend never fires (e.g. CSS transition removed)
+  const ANIMATION_TIMEOUT = 500;
+
   function open() {
     animating = true;
     details.open = true;
-    // Measure target height with current content.
     body.style.height = "0px";
     body.style.opacity = "0";
-    // Force layout so the next change transitions.
     void body.offsetHeight;
     const target = body.scrollHeight;
     body.style.height = target + "px";
     body.style.opacity = "1";
 
+    const guard = setTimeout(finishOpen, ANIMATION_TIMEOUT);
     body.addEventListener("transitionend", function onEnd(e) {
       if (e.propertyName !== "height") return;
       body.removeEventListener("transitionend", onEnd);
-      body.style.height = "auto"; // let it grow if content changes later
-      animating = false;
+      clearTimeout(guard);
+      finishOpen();
     });
+
+    function finishOpen() {
+      body.style.height = "auto";
+      animating = false;
+    }
   }
 
   function close() {
     animating = true;
-    // from auto to fixed px so we can transition to 0
     body.style.height = body.scrollHeight + "px";
     void body.offsetHeight;
     body.style.height = "0px";
     body.style.opacity = "0";
 
+    const guard = setTimeout(finishClose, ANIMATION_TIMEOUT);
     body.addEventListener("transitionend", function onEnd(e) {
       if (e.propertyName !== "height") return;
       body.removeEventListener("transitionend", onEnd);
+      clearTimeout(guard);
+      finishClose();
+    });
+
+    function finishClose() {
       details.open = false;
       animating = false;
-    });
+    }
   }
 
   summary.addEventListener("click", (e) => {
