@@ -24,8 +24,7 @@ import { MANUAL_ALIASES } from "./console-aliases.js";
  * Static keyword => setting mapping.
  * Easily extended, just add rows.
  */
-//TODO: broaden keyword synonyms -- e.g. "manga", "toys", "mtg", "yugioh",
-// "cheap" (price-lowest), "newest" (release-date), "asc"/"desc", etc.
+//TODO: broaden keyword synonyms list whenever encountering some new alias to be used
 const KEYWORDS = Object.freeze({
   // -- Categories --
   games:      { key: "broadCategory", value: "video-games" },
@@ -33,9 +32,13 @@ const KEYWORDS = Object.freeze({
   cards:      { key: "broadCategory", value: "trading-cards" },
   pokemon:    { key: "broadCategory", value: "trading-cards" },
   tcg:        { key: "broadCategory", value: "trading-cards" },
+  mtg:        { key: "broadCategory", value: "trading-cards" },
+  yugioh:     { key: "broadCategory", value: "trading-cards" },
   comics:     { key: "broadCategory", value: "comic-books" },
+  manga:      { key: "broadCategory", value: "comic-books" },
   funko:      { key: "broadCategory", value: "funko-pops" },
   pops:       { key: "broadCategory", value: "funko-pops" },
+  toys:       { key: "broadCategory", value: "funko-pops" },
   coins:      { key: "broadCategory", value: "coins" },
   lego:       { key: "broadCategory", value: "lego-sets" },
 
@@ -54,7 +57,11 @@ const KEYWORDS = Object.freeze({
   popular:    { key: "sort", value: "popularity" },
   alpha:      { key: "sort", value: "name" },
   expensive:  { key: "sort", value: "price-highest" },
+  cheap:      { key: "sort", value: "price-lowest" },
   rising:     { key: "sort", value: "change-dollar" },
+  newest:     { key: "sort", value: "date-added" },
+  asc:        { key: "sort", value: "name" },
+  desc:       { key: "sort", value: "price-highest" },
 
   // -- Toggles --
   novar:      { key: "excludeVariants", value: true },
