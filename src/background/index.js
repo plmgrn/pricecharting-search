@@ -70,8 +70,10 @@ api.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== MENU_ID) return;
 
   const settings = await readSettings();
-  const selection = normalizeSelection(info.selectionText, settings);
-  const url = buildSearchUrl(selection, settings);
+  const parsed = parseQuery(info.selectionText);
+  const effective = applyOverrides(settings, parsed);
+  const selection = normalizeSelection(parsed.query, effective);
+  const url = buildSearchUrl(selection, effective);
   if (!url) return;
 
   // guard against bad custom-template URLs that tabs.create rejects
@@ -109,8 +111,10 @@ if (api.commands) {
     const text = results?.[0]?.result;
     if (!text) return;
 
-    const selection = normalizeSelection(text, settings);
-    const url = buildSearchUrl(selection, settings);
+    const parsed = parseQuery(text);
+    const effective = applyOverrides(settings, parsed);
+    const selection = normalizeSelection(parsed.query, effective);
+    const url = buildSearchUrl(selection, effective);
     if (!url) return;
 
     try {

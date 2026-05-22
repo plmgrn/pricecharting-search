@@ -275,6 +275,27 @@ describe("applyOverrides integration", () => {
     assert.equal(r.regionName, "pal");
     assert.equal(r.consoleUid, "G7");
   });
+
+  test("console filter overrides stale non-game category", () => {
+    const comicsUser = { ...DEFAULTS, broadCategory: "comic-books" };
+    const r = applyOverrides(comicsUser, parseQuery("ps2:god of war"));
+    assert.equal(r.consoleUid, "G7");
+    assert.equal(r.broadCategory, "video-games");
+  });
+
+  test("console+region overrides stale category", () => {
+    const comicsUser = { ...DEFAULTS, broadCategory: "comic-books" };
+    const r = applyOverrides(comicsUser, parseQuery("pal,ps2:god of war"));
+    // regional resolution swaps to PAL PS2 and blanks regionName
+    assert.ok(r.consoleUid, "consoleUid should be set");
+    assert.equal(r.broadCategory, "video-games");
+  });
+
+  test("explicit category keyword wins over console-implied category", () => {
+    const r = applyOverrides(userHeavy, parseQuery("cards:pikachu"));
+    assert.equal(r.broadCategory, "trading-cards");
+    assert.equal(r.consoleUid, "G7");
+  });
 });
 
 // -- Delimiter edge cases --

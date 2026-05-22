@@ -318,6 +318,12 @@ export function parseQuery(input) {
     return { query: text, overrides: {}, raw: false };
   }
 
+  // a console filter implies video games -- clear any saved category
+  // that would conflict (e.g. user default is "comics")
+  if (overrides.consoleUid && !Object.hasOwn(overrides, "broadCategory")) {
+    overrides.broadCategory = "video-games";
+  }
+
   // swap to region-specific console-uid when both are present
   resolveRegionalConsole(overrides);
 
