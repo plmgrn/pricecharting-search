@@ -13,7 +13,7 @@
   "scripts": {
     "start:firefox": "web-ext run",
     "start:chrome": "web-ext run -t chromium",
-    "lint": "web-ext lint",
+    "lint": "npx eslint src/ && web-ext lint",
     "test": "node --test test/*.test.mjs",
     "build": "web-ext build"
   },

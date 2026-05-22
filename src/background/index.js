@@ -98,7 +98,8 @@ if (api.commands) {
     try {
       results = await api.scripting.executeScript({
         target: { tabId: tab.id },
-        func: () => window.getSelection()?.toString() ?? "",
+        // runs in the content page, not the service worker
+        func: () => window.getSelection()?.toString() ?? "", // eslint-disable-line no-undef
       });
     } catch {
       // can't inject into chrome:// or other restricted pages
