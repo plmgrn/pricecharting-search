@@ -6,6 +6,10 @@
   "description": "__MSG_extensionDescription__",
   "homepage_url": "https://github.com/plmgrn/pricecharting-search",
   "author": "Otto Palmgren",
+  "developer": {
+    "name": "Otto Palmgren",
+    "email": "plmgrn.dev@gmail.com"
+  },
   "omnibox": { "keyword": "pchart" },
   "commands": {
     "search-selection": {

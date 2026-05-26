@@ -15,5 +15,5 @@
   `storage.sync` API (or `storage.local` as a fallback). This data
   never leaves your browser's built-in sync mechanism.
 
-If you have questions, open an issue at
+If you have questions, email <plmgrn.dev@gmail.com> or open an issue at
 <https://github.com/plmgrn/pricecharting-search/issues>.
