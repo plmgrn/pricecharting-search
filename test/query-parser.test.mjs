@@ -26,6 +26,27 @@ describe("input type robustness", () => {
   test("BigInt does not throw", () => {
     assert.doesNotThrow(() => parseQuery(BigInt(99)));
   });
+
+  test("Symbol does not throw (coerced via ??)", () => {
+    assert.doesNotThrow(() => parseQuery(Symbol("test")));
+  });
+
+  for (const bad of [null, undefined, ""]) {
+    test(`parseQuery(${JSON.stringify(bad)}) returns empty query`, () => {
+      const r = parseQuery(bad);
+      assert.equal(r.query, "");
+    });
+  }
+
+  test("parseQuery(0) coerces to string '0'", () => {
+    const r = parseQuery(0);
+    assert.equal(r.query, "0");
+  });
+
+  test("parseQuery(false) coerces to string 'false'", () => {
+    const r = parseQuery(false);
+    assert.equal(r.query, "false");
+  });
 });
 
 // -- B. Single-token filter keywords --
@@ -296,6 +317,25 @@ describe("applyOverrides integration", () => {
     assert.equal(r.broadCategory, "trading-cards");
     assert.equal(r.consoleUid, "G7");
   });
+
+  test("no-colon input preserves all stored settings", () => {
+    const r = applyOverrides(userHeavy, parseQuery("zelda"));
+    assert.equal(r.broadCategory, "video-games");
+    assert.equal(r.consoleUid, "G7");
+    assert.equal(r.regionName, "ntsc");
+    assert.equal(r.sort, "name");
+    assert.equal(r.excludeVariants, true);
+    assert.equal(r.showImages, false);
+    assert.equal(r.language, "de");
+    assert.equal(r.openBehavior, "window");
+  });
+
+  test("raw mode with console still applies that console override", () => {
+    const r = applyOverrides(DEFAULTS, parseQuery("raw,ps2:test"));
+    // raw blanks defaults, but explicit ps2 filter still applies
+    assert.equal(r.consoleUid, "G7");
+    assert.equal(r.broadCategory, "video-games");
+  });
 });
 
 // -- Delimiter edge cases --
@@ -498,6 +538,34 @@ describe("adversarial inputs", () => {
   test("empty between commas still parses", () => {
     const r = parseQuery("jp,,ds:test");
     assert.equal(r.overrides.consoleUid, "G111");
+  });
+
+  test("colon with whitespace-only query", () => {
+    const r = parseQuery("jp:   ");
+    assert.equal(r.query, "");
+    assert.equal(r.overrides.regionName, "japan");
+  });
+
+  test("filter token that is substring of keyword", () => {
+    // 'game' is not a keyword (games is), should fall back
+    const r = parseQuery("game:zelda");
+    assert.equal(r.query, "game:zelda");
+  });
+
+  test("very long filter token falls back gracefully", () => {
+    const long = "a".repeat(1000);
+    const r = parseQuery(long + ":test");
+    assert.equal(r.query, long + ":test");
+  });
+
+  test("numeric-only filter is unknown, falls back", () => {
+    const r = parseQuery("12345:test");
+    assert.equal(r.query, "12345:test");
+  });
+
+  test("filter with special chars falls back", () => {
+    const r = parseQuery("ps2!:test");
+    assert.equal(r.query, "ps2!:test");
   });
 });
 

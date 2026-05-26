@@ -43,4 +43,50 @@ describe("CONSOLES integrity", () => {
       assert.equal(m.group, "Magazines & misc");
     }
   });
+
+  test("no duplicate names within the same group", () => {
+    const seen = Object.create(null);
+    const dupes = [];
+    for (const c of CONSOLES) {
+      const key = `${c.group}::${c.name}`;
+      if (seen[key]) dupes.push(key);
+      seen[key] = true;
+    }
+    assert.deepEqual(dupes, [], "duplicate names in same group");
+  });
+
+  test("all IDs start with G", () => {
+    for (const c of CONSOLES) {
+      assert.ok(c.id.startsWith("G"), `${c.name} id ${c.id} missing G prefix`);
+    }
+  });
+
+  test("PAL consoles start with PAL prefix", () => {
+    const pal = CONSOLES.filter(c => c.group === "PAL");
+    for (const c of pal) {
+      assert.ok(c.name.startsWith("PAL "), `${c.name} missing PAL prefix`);
+    }
+  });
+
+  test("Japan consoles start with JP prefix", () => {
+    const jp = CONSOLES.filter(c => c.group === "Japan");
+    for (const c of jp) {
+      assert.ok(c.name.startsWith("JP "), `${c.name} missing JP prefix`);
+    }
+  });
+
+  test("CONSOLE_GROUPS matches actual groups in CONSOLES (minus magazines)", () => {
+    const actualGroups = [...new Set(CONSOLES.map(c => c.group))];
+    const nonMag = actualGroups.filter(g => g !== "Magazines & misc");
+    for (const g of nonMag) {
+      assert.ok(CONSOLE_GROUPS.includes(g), `group ${g} not in CONSOLE_GROUPS`);
+    }
+  });
+
+  test("no whitespace-only names or IDs", () => {
+    for (const c of CONSOLES) {
+      assert.ok(c.id.trim().length > 0, `empty id for ${JSON.stringify(c)}`);
+      assert.ok(c.name.trim().length > 0, `empty name for ${JSON.stringify(c)}`);
+    }
+  });
 });

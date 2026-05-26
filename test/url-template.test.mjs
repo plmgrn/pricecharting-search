@@ -53,6 +53,42 @@ describe("normalizeSelection", () => {
     // should fall back to 200
     assert.equal(normalizeSelection("a".repeat(300), s).length, 200);
   });
+
+  test("undefined input returns empty string", () => {
+    assert.equal(normalizeSelection(undefined, DEFAULTS), "");
+  });
+
+  test("numeric input is coerced to string", () => {
+    assert.equal(normalizeSelection(42, DEFAULTS), "42");
+  });
+
+  test("negative maxSelectionLength treated as 0 (no truncation needed)", () => {
+    const s = { ...DEFAULTS, maxSelectionLength: -5 };
+    // Math.max(0, -5) = 0, max > 0 is false, no truncation
+    assert.equal(normalizeSelection("hello", s), "hello");
+  });
+
+  test("NaN maxSelectionLength falls back to 200", () => {
+    const s = { ...DEFAULTS, maxSelectionLength: NaN };
+    assert.equal(normalizeSelection("a".repeat(300), s).length, 200);
+  });
+
+  test("string maxSelectionLength falls back to 200", () => {
+    const s = { ...DEFAULTS, maxSelectionLength: "fifty" };
+    assert.equal(normalizeSelection("a".repeat(300), s).length, 200);
+  });
+
+  test("float maxSelectionLength is truncated", () => {
+    const s = { ...DEFAULTS, maxSelectionLength: 5.9 };
+    assert.equal(normalizeSelection("abcdefghij", s), "abcde");
+  });
+
+  test("tabs and newlines are collapsed", () => {
+    assert.equal(
+      normalizeSelection("hello\t\nworld", DEFAULTS),
+      "hello world"
+    );
+  });
 });
 
 // -- buildSearchUrl --
@@ -116,6 +152,45 @@ describe("buildSearchUrl", () => {
     const url = buildSearchUrl("test", s);
     assert.ok(!url.includes("exclude-variants="));
   });
+
+  test("non-boolean showImages is not sent", () => {
+    const s = { ...DEFAULTS, showImages: "false" };
+    const url = buildSearchUrl("test", s);
+    assert.ok(!url.includes("show-images="));
+  });
+
+  test("null consoleUid is omitted", () => {
+    const s = { ...DEFAULTS, consoleUid: null };
+    const url = buildSearchUrl("test", s);
+    assert.ok(!url.includes("console-uid="));
+  });
+
+  test("sort param is sent when non-default", () => {
+    const s = { ...DEFAULTS, sort: "price-highest" };
+    const { params } = deconstruct(buildSearchUrl("test", s));
+    assert.equal(params["sort"], "price-highest");
+  });
+
+  test("language with spaces is used as-is (no validation)", () => {
+    const s = { ...DEFAULTS, language: " de " };
+    const url = buildSearchUrl("test", s);
+    // trimmed by the code
+    assert.ok(url.includes("/de/search-products"));
+  });
+
+  test("empty language after trim is omitted", () => {
+    const s = { ...DEFAULTS, language: "   " };
+    const url = buildSearchUrl("test", s);
+    assert.ok(!url.includes("//search-products"));
+    const { pathname } = deconstruct(url);
+    assert.equal(pathname, "/search-products");
+  });
+
+  test("selection with special characters is encoded", () => {
+    const url = buildSearchUrl("a&b=c", DEFAULTS);
+    const { params } = deconstruct(url);
+    assert.equal(params["q"], "a&b=c");
+  });
 });
 
 describe("custom URL template", () => {
@@ -138,6 +213,35 @@ describe("custom URL template", () => {
     const s = { ...DEFAULTS, customUrlTemplate: "https://example.com/?q={q}" };
     const url = buildSearchUrl("god of war", s);
     assert.ok(url.includes("q=god%20of%20war"));
+  });
+
+  test("multiple {q} tokens are all replaced", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "https://example.com/?q={q}&r={q}" };
+    const url = buildSearchUrl("zelda", s);
+    assert.equal(url, "https://example.com/?q=zelda&r=zelda");
+  });
+
+  test("whitespace-only template is ignored", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "   " };
+    const url = buildSearchUrl("test", s);
+    // falls through to standard URL building
+    assert.ok(url.includes("pricecharting.com"));
+  });
+
+  test("data: scheme template returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "data:text/html,{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("ftp: scheme template returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "ftp://example.com/{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("HTTP (uppercase) template is accepted", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "HTTP://example.com/?q={q}" };
+    const url = buildSearchUrl("test", s);
+    assert.ok(url.startsWith("HTTP://"));
   });
 });
 
@@ -193,6 +297,38 @@ describe("end-to-end URL pipeline", () => {
 
   test("empty query after colon returns null", () => {
     assert.equal(fullPipeline("jp,ds:"), null);
+  });
+
+  test("console filter overrides stored non-game category in URL", () => {
+    const url = fullPipeline("ps2:god of war", {
+      ...DEFAULTS,
+      broadCategory: "comic-books",
+    });
+    assert.ok(url.includes("broad-category=video-games"));
+    assert.ok(!url.includes("broad-category=comic-books"));
+    assert.ok(url.includes("console-uid=G7"));
+  });
+
+  test("console-implied category appears in URL without explicit keyword", () => {
+    const url = fullPipeline("snes:zelda");
+    assert.ok(url.includes("broad-category=video-games"));
+    assert.ok(url.includes("console-uid=G13"));
+  });
+
+  test("context-menu-like flow: filter prefix is not in the search query", () => {
+    // simulates what the context menu handler does
+    const url = fullPipeline("ps2:god of war");
+    assert.ok(url.includes("q=god+of+war"));
+    assert.ok(!url.includes("q=ps2"));
+  });
+
+  test("plain text selection preserves stored category in URL", () => {
+    const url = fullPipeline("zelda", {
+      ...DEFAULTS,
+      broadCategory: "comic-books",
+    });
+    assert.ok(url.includes("broad-category=comic-books"));
+    assert.ok(!url.includes("console-uid="));
   });
 
   test("kitchen sink URL has all params", () => {
@@ -297,5 +433,41 @@ describe("URL round-trip deconstruction", () => {
     const { params, pathname } = deconstruct(url);
     assert.ok(pathname.startsWith("/fr/"), `expected /fr/ prefix, got ${pathname}`);
     assert.equal(params["language"], undefined);
+  });
+
+  test("absent optional string params are undefined", () => {
+    const url = fullPipeline("zelda");
+    const { params } = deconstruct(url);
+    assert.equal(params["broad-category"], undefined);
+    assert.equal(params["console-uid"], undefined);
+    assert.equal(params["region-name"], undefined);
+  });
+
+  test("boolean params are always sent when boolean-typed", () => {
+    const url = fullPipeline("zelda");
+    const { params } = deconstruct(url);
+    // DEFAULTS has excludeVariants=false and showImages=true
+    assert.equal(params["exclude-variants"], "false");
+    assert.equal(params["show-images"], "true");
+  });
+
+  test("raw clears stored custom template", () => {
+    const url = fullPipeline("raw:zelda", {
+      ...DEFAULTS,
+      customUrlTemplate: "https://example.com/?q={q}",
+    });
+    // raw blanks customUrlTemplate, so standard URL is built
+    assert.ok(url.includes("pricecharting.com"));
+    assert.ok(url.includes("q=zelda"));
+  });
+
+  test("region + language both applied", () => {
+    const url = fullPipeline("eu:zelda", {
+      ...DEFAULTS,
+      language: "de",
+    });
+    const { params, pathname } = deconstruct(url);
+    assert.ok(pathname.startsWith("/de/"));
+    assert.equal(params["region-name"], "pal");
   });
 });
