@@ -5,9 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.2] -- 2026-05-26
+
+### Changed
+- Settings module now accepts an optional API override parameter for
+  dependency injection, enabling real-module testing without browser.
+- API shim (`api.js`) no longer throws in non-browser environments
+  (falls back to empty object).
+
+### Fixed
+- Test suite now exercises the real `settings.js` module instead of a
+  re-implementation, catching actual regressions.
 
 ### Added
+- Test coverage for `defaults.js` (shape, types, immutability).
+- Test coverage for `console-aliases.js` (integrity, keyword shadowing).
+- Edge-case tests across query-parser, url-template, and consoles
+  (non-string inputs, custom template schemes, boolean param handling,
+  structural integrity checks).
 - Common console nicknames (ps1, psx, vita, sfc, megadrive, xbone,
   switch, gc, 2ds, dsi, etc.) now work as filter keywords.
 - New query-parser keywords: `mtg`, `yugioh` (trading cards), `manga`
@@ -25,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   required `{q}` placeholder.
 
 ### Fixed
+- Filter syntax (e.g. `pal,ps2:zelda`) now works from the context
+  menu and keyboard shortcut, not just the omnibox and popup.
+- Selecting a console filter no longer inherits an unrelated saved
+  category (e.g. comics) -- console filters now imply video-games.
 - Console aliases like `mastersystem` and `gamegear` (without spaces)
   now resolve correctly.
 - Firefox detection in theme module no longer relies on user-agent
@@ -35,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from accumulating in storage.
 
 ### Internal
-- Added test suite (`node --test`) with 571 tests covering query
+- Added test suite (`node --test`) with 705 tests covering query
   parsing, console alias resolution, URL construction round-trips,
   data integrity, and settings persistence.
 - ESLint config (`.eslintrc.json`) with WebExtension-aware environment

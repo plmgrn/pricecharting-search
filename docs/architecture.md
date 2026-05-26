@@ -111,9 +111,11 @@ no browser APIs needed.
 
 | File | Covers |
 |---|---|
-| `consoles.test.mjs` | Data integrity: no duplicate IDs, valid groups, MAGAZINES subset. |
+| `console-aliases.test.mjs` | Alias map integrity, immutability, keyword-shadowing guard. |
+| `consoles.test.mjs` | Data integrity: no duplicate IDs/names, valid groups, ID format, region prefixes. |
+| `defaults.test.mjs` | DEFAULTS shape, types, immutability, SCHEMA_VERSION, ALWAYS_SEND_PARAMS, SEARCH_BASE_URL. |
 | `query-parser.test.mjs` | Keyword parsing, console alias resolution, regional swaps, adversarial inputs, fuzz. |
-| `settings.test.mjs` | Read/write/reset, schema migration, change subscription, area fallback. |
+| `settings.test.mjs` | Real-module read/write/reset, schema migration, change subscription, area fallback, round-trips. |
 | `url-template.test.mjs` | Selection normalization, URL construction, custom templates, round-trip deconstruction. |
 
 ## `docs/` — developer documentation
