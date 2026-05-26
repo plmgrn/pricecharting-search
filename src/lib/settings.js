@@ -13,11 +13,14 @@
 import { api } from "./api.js";
 import { DEFAULTS, SCHEMA_VERSION } from "./defaults.js";
 
-/** Pick the available storage area. Computed lazily. */
-function pickArea() {
-  // Prefer sync; fall back to local.
-  if (api.storage && api.storage.sync) return api.storage.sync;
-  if (api.storage && api.storage.local) return api.storage.local;
+/**
+ * Pick the available storage area.
+ * @param {object} [_api] override for testing
+ */
+function pickArea(_api) {
+  const a = _api || api;
+  if (a?.storage?.sync) return a.storage.sync;
+  if (a?.storage?.local) return a.storage.local;
   return null;
 }
 
@@ -25,10 +28,11 @@ function pickArea() {
  * Read effective settings (DEFAULTS overlaid with anything stored).
  * Never throws, on storage error returns DEFAULTS.
  *
+ * @param {object} [_api] override for testing
  * @returns {Promise<object>}
  */
-export async function readSettings() {
-  const area = pickArea();
+export async function readSettings(_api) {
+  const area = pickArea(_api);
   if (!area) return { ...DEFAULTS };
   try {
     // only read keys we know about, ignore stray data in the area
@@ -44,10 +48,11 @@ export async function readSettings() {
  * Always stamps the current SCHEMA_VERSION.
  *
  * @param {object} patch
+ * @param {object} [_api] override for testing
  * @returns {Promise<void>}
  */
-export async function writeSettings(patch) {
-  const area = pickArea();
+export async function writeSettings(patch, _api) {
+  const area = pickArea(_api);
   if (!area) return;
   const clean = {};
   for (const k of Object.keys(patch)) {
@@ -59,10 +64,11 @@ export async function writeSettings(patch) {
 
 /**
  * Reset all settings to DEFAULTS.
+ * @param {object} [_api] override for testing
  * @returns {Promise<void>}
  */
-export async function resetSettings() {
-  const area = pickArea();
+export async function resetSettings(_api) {
+  const area = pickArea(_api);
   if (!area) return;
   await area.clear();
   await area.set({ ...DEFAULTS });
@@ -82,10 +88,11 @@ export async function resetSettings() {
  *   3. Each case falls through (no `break`) so cumulative upgrades
  *      apply in order.
  *
+ * @param {object} [_api] override for testing
  * @returns {Promise<void>}
  */
-export async function migrateSettings() {
-  const area = pickArea();
+export async function migrateSettings(_api) {
+  const area = pickArea(_api);
   if (!area) return;
 
   let stored;
@@ -128,16 +135,18 @@ export async function migrateSettings() {
  * from another device, etc.). Returns an unsubscribe function.
  *
  * @param {(newSettings: object) => void} callback
+ * @param {object} [_api] override for testing
  * @returns {() => void}
  */
-export function onSettingsChanged(callback) {
-  if (!api.storage || !api.storage.onChanged) return () => {};
+export function onSettingsChanged(callback, _api) {
+  const a = _api || api;
+  if (!a?.storage?.onChanged) return () => {};
   // ignore changes from the other area so we don't double-fire
-  const expectedArea = (api.storage && api.storage.sync) ? "sync" : "local";
+  const expectedArea = a.storage.sync ? "sync" : "local";
   const handler = async (_changes, areaName) => {
     if (areaName !== expectedArea) return;
-    callback(await readSettings());
+    callback(await readSettings(_api));
   };
-  api.storage.onChanged.addListener(handler);
-  return () => api.storage.onChanged.removeListener(handler);
+  a.storage.onChanged.addListener(handler);
+  return () => a.storage.onChanged.removeListener(handler);
 }

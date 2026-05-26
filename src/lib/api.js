@@ -10,4 +10,7 @@
 
 /* global browser, chrome */
 
-export const api = globalThis.browser?.runtime ? browser : chrome;
+// eslint-disable-next-line no-undef
+export const api = globalThis.browser?.runtime
+  ? globalThis.browser
+  : (typeof chrome !== "undefined" ? chrome : {});
