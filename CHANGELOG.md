@@ -209,3 +209,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1]: https://github.com/plmgrn/pricecharting-search/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/plmgrn/pricecharting-search/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/plmgrn/pricecharting-search/releases/tag/v1.0.0
+
+## [1.2.3] - 2026-06-22
+
+### Added
+- Build step using `esbuild` to emit both an ES module service worker
+  (`background/background.mjs`) and a legacy IIFE background script
+  (`background/background.legacy.js`) from the single source `src/background/index.js`.
+
+### Changed
+- `scripts/build.js` and `package.json`: builds now copy `src/` → `build/`, bundle
+  the background entry twice (ESM + IIFE), and patch the generated
+  `build/manifest.json` so the packaged XPI contains both `service_worker`
+  and a legacy `background.scripts` fallback for AMO/Firefox validation.
+- Added `eslint.config.mjs` and small lint fixes across `src/lib/*`.
+
+### Fixed
+- AMO validation error caused by a manifest that referenced only an
+  MV3 `service_worker` and no Firefox-compatible fallback; the new build
+  produces the legacy fallback so AMO no longer rejects the package as
+  "corrupted". `web-ext lint` reports the expected
+  `BACKGROUND_SERVICE_WORKER_IGNORED` warning only.
+
+[1.2.3]: https://github.com/plmgrn/pricecharting-search/compare/v1.2.2...v1.2.3
