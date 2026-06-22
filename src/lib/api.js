@@ -8,9 +8,7 @@
 // Importing `api` from here means the rest of the codebase never has
 // to think about which browser it's running in.
 
-/* global browser, chrome */
-
-// eslint-disable-next-line no-undef
+// Prefer `globalThis` to avoid relying on lint-time globals.
 export const api = globalThis.browser?.runtime
   ? globalThis.browser
   : (typeof chrome !== "undefined" ? chrome : {});

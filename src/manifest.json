@@ -42,7 +42,6 @@
   "minimum_chrome_version": "111",
   "background": {
     "service_worker": "background/index.js",
-    "scripts": ["background/index.js"],
     "type": "module"
   },
   "options_ui": {

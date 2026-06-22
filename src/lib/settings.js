@@ -109,7 +109,6 @@ export async function migrateSettings(_api) {
   // Start from defaults so any newly-added keys are present.
   const s = { ...DEFAULTS, ...stored };
 
-  /* eslint-disable no-fallthrough */
   switch (fromVersion) {
     case 0:
       // First install (or pre-versioned data). Nothing to transform;
@@ -124,7 +123,6 @@ export async function migrateSettings(_api) {
       // overlay-on-defaults read in readSettings() is forward-safe.
       return;
   }
-  /* eslint-enable no-fallthrough */
 
   s.schemaVersion = SCHEMA_VERSION;
   await area.set(s);
