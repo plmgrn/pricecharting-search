@@ -6,6 +6,9 @@ web-ext-artifacts/
 Thumbs.db
 .vscode/
 
+#build artifacts
+build/
+
 # Local-only working folder (notes, scratch, drafts, secrets).
 # Ignore the *contents* (not the directory itself) so the un-ignore
 # below can re-include the README. If `local/` were ignored directly,
