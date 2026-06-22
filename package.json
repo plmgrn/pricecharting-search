@@ -13,11 +13,14 @@
   "scripts": {
     "start:firefox": "web-ext run",
     "start:chrome": "web-ext run -t chromium",
-    "lint": "npx eslint src/ && web-ext lint",
+    "lint": "npx eslint src/ && npm run build:bundle && web-ext lint --source-dir build",
     "test": "node --test test/*.test.mjs",
-    "build": "web-ext build"
+    "build:bundle": "node scripts/build.js",
+    "build": "npm run build:bundle && web-ext build --source-dir build"
   },
   "devDependencies": {
-    "web-ext": "^8.0.0"
+    "esbuild": "^0.28.1",
+    "globals": "^17.6.0",
+    "web-ext": "^10.4.0"
   }
 }
