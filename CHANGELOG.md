@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2026-9-30
+
+## Bug fixes
+- Fix console region resolving in searches
+  - Previously defaulted to random region when query had no region
+    -This is not desireable, as releases and consoles are not region free
+  - Now should use the user settings for the region instead
+- Should also fix some issues with tcg and other categories
+
 ## [1.2.4] - 2026-06-22
 
 ## Hotfix

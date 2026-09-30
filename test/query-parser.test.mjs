@@ -57,13 +57,19 @@ describe("single-token keywords", () => {
     videogames: { key: "broadCategory", value: "video-games" },
     vg:         { key: "broadCategory", value: "video-games" },
     cards:      { key: "broadCategory", value: "trading-cards" },
-    pokemon:    { key: "broadCategory", value: "trading-cards" },
+    pokemon:    { key: "broadCategory", value: "trading-cards", term: "pokemon" },
     tcg:        { key: "broadCategory", value: "trading-cards" },
-    mtg:        { key: "broadCategory", value: "trading-cards" },
-    magic:      { key: "broadCategory", value: "trading-cards" },
-    yugioh:     { key: "broadCategory", value: "trading-cards" },
-    lorcana:    { key: "broadCategory", value: "trading-cards" },
-    onepiece:   { key: "broadCategory", value: "trading-cards" },
+    mtg:        { key: "broadCategory", value: "trading-cards", term: "magic" },
+    magic:      { key: "broadCategory", value: "trading-cards", term: "magic" },
+    yugioh:     { key: "broadCategory", value: "trading-cards", term: "yugioh" },
+    lorcana:    { key: "broadCategory", value: "trading-cards", term: "lorcana" },
+    onepiece:   { key: "broadCategory", value: "trading-cards", term: "one piece" },
+    pkmn:       { key: "broadCategory", value: "trading-cards", term: "pokemon" },
+    poke:       { key: "broadCategory", value: "trading-cards", term: "pokemon" },
+    ygo:        { key: "broadCategory", value: "trading-cards", term: "yugioh" },
+    digimon:    { key: "broadCategory", value: "trading-cards", term: "digimon" },
+    dragonball: { key: "broadCategory", value: "trading-cards", term: "dragon ball" },
+    dbz:        { key: "broadCategory", value: "trading-cards", term: "dragon ball" },
     comics:     { key: "broadCategory", value: "comic-books" },
     manga:      { key: "broadCategory", value: "comic-books" },
     funko:      { key: "broadCategory", value: "funko-pops" },
@@ -105,11 +111,12 @@ describe("single-token keywords", () => {
     images:     { key: "showImages", value: true },
   };
 
-  for (const [kw, { key, value }] of Object.entries(EXPECTED)) {
+  for (const [kw, { key, value, term }] of Object.entries(EXPECTED)) {
     test(`${kw}: sets ${key}=${JSON.stringify(value)}`, () => {
       const r = parseQuery(`${kw}:test`);
       assert.equal(r.overrides[key], value);
-      assert.equal(r.query, "test");
+      // TCG keywords keep the game name in the query ("pokemon test")
+      assert.equal(r.query, term ? `${term} test` : "test");
       assert.equal(r.raw, false);
     });
   }

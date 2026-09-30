@@ -38,6 +38,19 @@ const PARAM_FROM_SETTING = Object.freeze({
 });
 
 /**
+ * Which filters PriceCharting applies per broad category. console-uid
+ * values (consoles.js) are video game consoles and region-name is a video
+ * game region, so on other categories they don't narrow the search, they
+ * empty it (PriceCharting answers with category=no-results). "" means
+ * "all categories". Edit this table if a category turns out to support more.
+ */
+const CATEGORY_FILTERS = Object.freeze({
+  "":            { consoleUid: true, regionName: true },
+  "video-games": { consoleUid: true, regionName: true },
+});
+const NO_GAME_FILTERS = Object.freeze({ consoleUid: false, regionName: false });
+
+/**
  * Settings whose presence in the URL is controlled by a boolean.
  * The string value sent is "true" / "false".
  */
@@ -90,7 +103,9 @@ export function buildSearchUrl(selection, settings) {
   }
 
   // Per-setting string params: only set when non-empty.
+  const applies = CATEGORY_FILTERS[settings.broadCategory ?? ""] ?? NO_GAME_FILTERS;
   for (const [settingKey, paramName] of Object.entries(PARAM_FROM_SETTING)) {
+    if (settingKey in applies && !applies[settingKey]) continue;
     const v = settings[settingKey];
     if (v != null && String(v) !== "") {
       url.searchParams.set(paramName, String(v));

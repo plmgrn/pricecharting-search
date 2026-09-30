@@ -31,13 +31,22 @@ const KEYWORDS = Object.freeze({
   videogames: { key: "broadCategory", value: "video-games" },
   vg:         { key: "broadCategory", value: "video-games" },
   cards:      { key: "broadCategory", value: "trading-cards" },
-  pokemon:    { key: "broadCategory", value: "trading-cards" },
   tcg:        { key: "broadCategory", value: "trading-cards" },
-  mtg:        { key: "broadCategory", value: "trading-cards" },
-  magic:      { key: "broadCategory", value: "trading-cards" },
-  yugioh:     { key: "broadCategory", value: "trading-cards" },
-  lorcana:    { key: "broadCategory", value: "trading-cards" },
-  onepiece:   { key: "broadCategory", value: "trading-cards" },
+  // TCG-specific keywords. PriceCharting has no per-game search category,
+  // only "trading-cards" for all of them, so the game name is kept in the
+  // query (sets are named "Pokemon Base Set", "Magic Bloomburrow", ...).
+  pokemon:    { key: "broadCategory", value: "trading-cards", term: "pokemon" },
+  pkmn:       { key: "broadCategory", value: "trading-cards", term: "pokemon" },
+  poke:       { key: "broadCategory", value: "trading-cards", term: "pokemon" },
+  mtg:        { key: "broadCategory", value: "trading-cards", term: "magic" },
+  magic:      { key: "broadCategory", value: "trading-cards", term: "magic" },
+  yugioh:     { key: "broadCategory", value: "trading-cards", term: "yugioh" },
+  ygo:        { key: "broadCategory", value: "trading-cards", term: "yugioh" },
+  lorcana:    { key: "broadCategory", value: "trading-cards", term: "lorcana" },
+  onepiece:   { key: "broadCategory", value: "trading-cards", term: "one piece" },
+  digimon:    { key: "broadCategory", value: "trading-cards", term: "digimon" },
+  dragonball: { key: "broadCategory", value: "trading-cards", term: "dragon ball" },
+  dbz:        { key: "broadCategory", value: "trading-cards", term: "dragon ball" },
   comics:     { key: "broadCategory", value: "comic-books" },
   manga:      { key: "broadCategory", value: "comic-books" },
   funko:      { key: "broadCategory", value: "funko-pops" },
@@ -258,6 +267,41 @@ function resolveRegionalConsole(overrides) {
 }
 
 /**
+ * Put a TCG term in front of the query ("pokemon" + "red" => "pokemon red"),
+ * unless the query already contains it as a word. An empty query becomes
+ * just the term, so "pokemon:" searches for pokemon.
+ */
+function withTerm(term, query) {
+  if (!term) return query;
+  const words = query.toLowerCase().split(/\s+/);
+  if (words.includes(term.split(" ")[0])) return query;
+  return query ? term + " " + query : term;
+}
+
+function isKnownToken(token) {
+  return Object.hasOwn(KEYWORDS, token) || Object.hasOwn(CONSOLE_ALIASES, token);
+}
+
+/**
+ * Apply one keyword or console alias to overrides. Returns false if unknown.
+ * `state.term` follows the last category keyword, so "pokemon,cards" drops
+ * the pokemon term the same way it drops the pokemon category.
+ */
+function applyToken(token, overrides, state) {
+  if (Object.hasOwn(KEYWORDS, token)) {
+    const kw = KEYWORDS[token];
+    overrides[kw.key] = kw.value;
+    if (kw.key === "broadCategory") state.term = kw.term ?? "";
+    return true;
+  }
+  if (Object.hasOwn(CONSOLE_ALIASES, token)) {
+    overrides.consoleUid = CONSOLE_ALIASES[token];
+    return true;
+  }
+  return false;
+}
+
+/**
  * Parse a raw query string using the `filters:query` delimiter syntax.
  *
  * @param {string} input is the raw text from the popup, omnibox, or context menu selection
@@ -293,28 +337,32 @@ export function parseQuery(input) {
   }
 
   // go through all comma-delimited keywords from input (the xx and yy from xx,yy:string)
+  let recognised = 0;
+  const state = { term: "" };
   for (const token of tokens) {
     if (token === "raw") {
       raw = true;
+      recognised++;
       continue;
     }
-
-    // check static keywords first
-    if (Object.hasOwn(KEYWORDS, token)) {
-      const kw = KEYWORDS[token];
-      overrides[kw.key] = kw.value;
+    if (applyToken(token, overrides, state)) {
+      recognised++;
       continue;
     }
-
-    // check console aliases
-    if (Object.hasOwn(CONSOLE_ALIASES, token)) {
-      const consoleId = CONSOLE_ALIASES[token];
-      overrides.consoleUid = consoleId;
+    // "ps2 pal" (space instead of comma): accept if every word is known
+    const words = token.split(/\s+/);
+    if (words.length > 1 && words.every(isKnownToken)) {
+      for (const w of words) applyToken(w, overrides, state);
+      recognised++;
       continue;
     }
+    // unknown token next to recognised ones is a typo, drop it so it
+    // doesn't end up in the search
+  }
 
-    // unknown token, put the whole original text back as query
-    // (don't silently drop user's input)
+  // nothing recognised at all: this was a title with a colon in it
+  // ("Zelda: Ocarina of Time"), search the original text untouched
+  if (recognised === 0) {
     return { query: text, overrides: {}, raw: false };
   }
 
@@ -327,7 +375,7 @@ export function parseQuery(input) {
   // swap to region-specific console-uid when both are present
   resolveRegionalConsole(overrides);
 
-  return { query, overrides, raw };
+  return { query: withTerm(state.term, query), overrides, raw };
 }
 
 /**
@@ -339,20 +387,27 @@ export function parseQuery(input) {
  * @returns {object} new settings object with overrides applied
  */
 export function applyOverrides(settings, parsed) {
-  if (parsed.raw) {
-    return {
-      ...settings,
-      broadCategory: "",
-      consoleUid: "",
-      regionName: "",
-      sort: "popularity",
-      excludeVariants: false,
-      showImages: true,
-      language: "",
-      customUrlTemplate: "",
-      ...parsed.overrides,
-    };
-  }
+  const merged = parsed.raw
+    ? {
+        ...settings,
+        broadCategory: "",
+        consoleUid: "",
+        regionName: "",
+        sort: "popularity",
+        excludeVariants: false,
+        showImages: true,
+        language: "",
+        customUrlTemplate: "",
+        ...parsed.overrides,
+      }
+    : { ...settings, ...parsed.overrides };
 
-  return { ...settings, ...parsed.overrides };
+  // Resolve after merging so stored defaults are covered too
+  // (stored region + inline console, or both stored). Skipped for
+  // non-game categories, where the console filter is irrelevant and
+  // resolving would wrongly blank the region.
+  if (!merged.broadCategory || merged.broadCategory === "video-games") {
+    resolveRegionalConsole(merged);
+  }
+  return merged;
 }

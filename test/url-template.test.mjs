@@ -255,10 +255,10 @@ describe("end-to-end URL pipeline", () => {
     assert.ok(url.includes("q=zelda"));
   });
 
-  test("lego,eu -> broad-category + region-name", () => {
+  test("lego,eu -> broad-category, region-name omitted (games only)", () => {
     const url = fullPipeline("lego,eu:star wars");
     assert.ok(url.includes("broad-category=lego-sets"));
-    assert.ok(url.includes("region-name=pal"));
+    assert.ok(!url.includes("region-name="));
     assert.ok(!url.includes("console-uid="));
     assert.ok(url.includes("q=star+wars"));
   });

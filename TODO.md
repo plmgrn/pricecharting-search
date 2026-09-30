@@ -6,7 +6,7 @@ Identified bugs
 
 - [ ] Fix hotbar search functioning 
     - [ ] Fix bug with filters being used as the query (should never happen)
-    - [ ] Fix console aliases list with consoleuid (vita marked as G43 when it is G101 tms.)
+    - [x] Fix console aliases list with consoleuid (vita marked as G43 when it is G101 tms.)
 
 ## Improvement
 
