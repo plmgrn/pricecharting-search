@@ -7,6 +7,8 @@ Identified bugs
 - [ ] Fix hotbar search functioning 
     - [ ] Fix bug with filters being used as the query (should never happen)
     - [x] Fix console aliases list with consoleuid (vita marked as G43 when it is G101 tms.)
+- [ ] Logic behind regions and searches should be revised
+    -[ ] Add option to disable region specifying when searching highlighted text
 
 ## Improvement
 
