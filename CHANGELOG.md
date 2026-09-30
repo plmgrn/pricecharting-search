@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.5] - 2026-9-30
 
-## Bug fixes
+### Bug fixes
 - Fix console region resolving in searches
   - Previously defaulted to random region when query had no region
     -This is not desireable, as releases and consoles are not region free
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.4] - 2026-06-22
 
-## Hotfix
+### Hotfix
 - Fix a problem with firefox compatibility that was left over in 1.2.3
 
 
