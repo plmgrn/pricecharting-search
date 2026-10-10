@@ -287,6 +287,12 @@ function withTerm(term, query) {
   return query ? term + " " + query : term;
 }
 
+
+/**
+ * Check if a token is a known keyword or console alias.
+ * @param {string} token 
+ * @returns {boolean} true if the token is known, false otherwise
+ */
 function isKnownToken(token) {
   return Object.hasOwn(KEYWORDS, token) || Object.hasOwn(CONSOLE_ALIASES, token);
 }
@@ -327,13 +333,13 @@ function isQuoted(input) {
 
 /**
  * Parse a list of tokens and apply them to the overrides and state.
- * @param {*} tokens 
- * @param {*} overrides 
- * @param {*} state 
- * @param {*} recognised 
- * @param {*} raw 
+ * @param {string[]} tokens 
+ * @param {{Record<string, string|boolean>}} overrides 
+ * @param {} state 
  */
-function parseTokens(tokens, overrides, state, recognised = 0, raw = false) {
+function parseTokens(tokens, overrides, state) {
+  let recognised = 0;
+  let raw = false;
   for (const token of tokens) {
     if (token === "raw") {
       raw = true;
@@ -354,6 +360,7 @@ function parseTokens(tokens, overrides, state, recognised = 0, raw = false) {
     // unknown token next to recognised ones is a typo, drop it so it
     // doesn't end up in the search
   }
+  return { recognised, raw };
 }
 /**
  * Parse a raw query string using the `filters:query` delimiter syntax.
@@ -364,7 +371,6 @@ function parseTokens(tokens, overrides, state, recognised = 0, raw = false) {
 export function parseQuery(input) {
   const text = String(input ?? "").trim(); // defensive, in case of null/undefined
   const overrides = {}; // parsed filter overrides to be used in place of stored settings
-  let raw = false; // true if the user requested raw search (no filters applied, search the query literally)
   let query = text; // default query is the entire input
 
   // quoted input, strip outer quotes and skip filter parsing
@@ -377,7 +383,7 @@ export function parseQuery(input) {
   const colonIdx = text.indexOf(":");
   if (colonIdx === -1) {
     // no colon, entire string is the query
-    return { query: text, overrides, raw };
+    return { query: text, overrides, raw: false };
   }
 
   const filterPart = text.slice(0, colonIdx).trim().toLowerCase();
@@ -391,15 +397,16 @@ export function parseQuery(input) {
     return { query, overrides, raw: true };
   }
 
-  // go through all comma-delimited keywords from input (the xx and yy from xx,yy:string)
-  let recognised = 0;
+  // state object to carry the last category term through the parsing
   const state = { term: "" };
-  parseTokens(tokens, overrides, state, recognised, raw);
+
+  // go through all comma-delimited keywords from input (the xx and yy from xx,yy:string)
+  const parsed = parseTokens(tokens, overrides, state);
 
   // nothing recognised at all: this was a title with a colon in it
   // ("Zelda: Ocarina of Time"), search the original text untouched
-  if (recognised === 0) {
-    return { query: text, overrides: {}, raw: false };
+  if (parsed.recognised === 0) {
+    return { query: text, overrides: {}, raw: true };
   }
 
   // a console filter implies video games -- clear any saved category
@@ -411,7 +418,7 @@ export function parseQuery(input) {
   // swap to region-specific console-uid when both are present
   resolveRegionalConsole(overrides);
 
-  return { query: withTerm(state.term, query), overrides, raw };
+  return { query: withTerm(state.term, query), overrides, raw: parsed.raw };
 }
 
 
