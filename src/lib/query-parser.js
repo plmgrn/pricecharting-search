@@ -406,7 +406,7 @@ export function parseQuery(input) {
   // nothing recognised at all: this was a title with a colon in it
   // ("Zelda: Ocarina of Time"), search the original text untouched
   if (parsed.recognised === 0) {
-    return { query: text, overrides: {}, raw: true };
+    return { query: text, overrides: {}, raw: false };
   }
 
   // a console filter implies video games -- clear any saved category
