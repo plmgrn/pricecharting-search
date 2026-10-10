@@ -5,25 +5,37 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci || npm install
-      - run: npm test
+      - run: npm ci --ignore-scripts
+      - run: npm run test:coverage
+      - uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./lcov.info
+          fail_ci_if_error: false
 
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci || npm install
+      - run: npm ci --ignore-scripts
       - run: npm run lint
 
   build:
@@ -31,13 +43,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci || npm install
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
           name: extension-build
           path: web-ext-artifacts/*.zip
           if-no-files-found: warn
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/dependency-review-action@v4

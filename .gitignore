@@ -15,3 +15,5 @@ build/
 # git wouldn't descend into it and the negation would never apply.
 local/*
 !local/README.md
+
+lcov.info
