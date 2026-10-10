@@ -20,6 +20,7 @@ import { MANUAL_ALIASES } from "./console-aliases.js";
  * @typedef {{ query: string, overrides: Record<string, string|boolean>, raw: boolean }} ParseResult
  */
 
+
 /**
  * Static keyword => setting mapping.
  * Easily extended, just add rows.
@@ -94,6 +95,7 @@ const KEYWORDS = Object.freeze({
   images:     { key: "showImages", value: true },
 });
 
+
 // Curated nickname aliases live in console-aliases.js.
 // They're merged after auto-generated abbreviations so they win ties.
 
@@ -122,6 +124,7 @@ function buildConsoleAliases() {
 
   return Object.freeze(map);
 }
+
 
 /**
  * Generate common abbreviations for console names.
@@ -174,7 +177,9 @@ function generateAbbreviations(lower) {
   return abbrevs;
 }
 
+
 const CONSOLE_ALIASES = buildConsoleAliases();
+
 
 /**
  * Region prefix used in CONSOLES names, keyed by regionName value.
@@ -183,6 +188,7 @@ const REGION_PREFIX = Object.freeze({
   japan: "JP ",
   pal:   "PAL ",
 });
+
 
 /**
  * Americas names that differ in other regions.
@@ -198,6 +204,7 @@ const REGIONAL_NAME_OVERRIDES = Object.freeze({
   "Sega Master System": { japan: "JP Sega Mark III" },
 });
 
+
 /**
  * Map CONSOLES group => regionName value for detecting
  * when a console is already region-specific.
@@ -206,6 +213,7 @@ const REGION_FOR_GROUP = Object.freeze({
   "Japan": "japan",
   "PAL":   "pal",
 });
+
 
 /**
  * When a region + console are both specified, swap the generic
@@ -266,6 +274,7 @@ function resolveRegionalConsole(overrides) {
   }
 }
 
+
 /**
  * Put a TCG term in front of the query ("pokemon" + "red" => "pokemon red"),
  * unless the query already contains it as a word. An empty query becomes
@@ -278,9 +287,16 @@ function withTerm(term, query) {
   return query ? term + " " + query : term;
 }
 
+
+/**
+ * Check if a token is a known keyword or console alias.
+ * @param {string} token 
+ * @returns {boolean} true if the token is known, false otherwise
+ */
 function isKnownToken(token) {
   return Object.hasOwn(KEYWORDS, token) || Object.hasOwn(CONSOLE_ALIASES, token);
 }
+
 
 /**
  * Apply one keyword or console alias to overrides. Returns false if unknown.
@@ -301,44 +317,29 @@ function applyToken(token, overrides, state) {
   return false;
 }
 
+
 /**
- * Parse a raw query string using the `filters:query` delimiter syntax.
- *
- * @param {string} input is the raw text from the popup, omnibox, or context menu selection
- * @returns {ParseResult}
+ * Checks if the input string is quoted.
+ * called by parseQuery to skip filter parsing for quoted input.
+ * ran only on the query part of the input, not the filter part.
+ * @param {*} input string to check
+ * @returns {boolean} true if the input is quoted, false otherwise
  */
-export function parseQuery(input) {
+function isQuoted(input) {
   const text = String(input ?? "").trim();
-  const overrides = {};
-  let raw = false;
-  let query = text;
+  return text.length >= 2 && text[0] === '"' && text[text.length - 1] === '"';
+}
 
-  // quoted input, strip outer quotes and skip filter parsing
-  if (text.length >= 2 && text[0] === '"' && text[text.length - 1] === '"') {
-    return { query: text.slice(1, -1), overrides, raw: true };
-  }
 
-  // look for the first colon as delimiter
-  const colonIdx = text.indexOf(":");
-  if (colonIdx === -1) {
-    // no colon, entire string is the query
-    return { query: text, overrides, raw };
-  }
-
-  const filterPart = text.slice(0, colonIdx).trim().toLowerCase();
-  query = text.slice(colonIdx + 1).trim();
-
-  // split filter part by commas
-  const tokens = filterPart.split(",").map(t => t.trim()).filter(Boolean);
-
-  // bare colon with no keywords, treat as raw
-  if (tokens.length === 0) {
-    return { query, overrides, raw: true };
-  }
-
-  // go through all comma-delimited keywords from input (the xx and yy from xx,yy:string)
+/**
+ * Parse a list of tokens and apply them to the overrides and state.
+ * @param {string[]} tokens 
+ * @param {{Record<string, string|boolean>}} overrides 
+ * @param {} state 
+ */
+function parseTokens(tokens, overrides, state) {
   let recognised = 0;
-  const state = { term: "" };
+  let raw = false;
   for (const token of tokens) {
     if (token === "raw") {
       raw = true;
@@ -359,10 +360,52 @@ export function parseQuery(input) {
     // unknown token next to recognised ones is a typo, drop it so it
     // doesn't end up in the search
   }
+  return { recognised, raw };
+}
+/**
+ * Parse a raw query string using the `filters:query` delimiter syntax.
+ *
+ * @param {string} input is the raw text from the popup, omnibox, or context menu selection
+ * @returns {ParseResult}
+ */
+export function parseQuery(input) {
+  const text = String(input ?? "").trim(); // defensive, in case of null/undefined
+  const overrides = {}; // parsed filter overrides to be used in place of stored settings
+  let query = text; // default query is the entire input
+
+  // quoted input, strip outer quotes and skip filter parsing
+  if (isQuoted(text)) {
+    return { query: text.slice(1, -1), overrides, raw: true };
+  }
+
+  // look for the first colon as delimiter
+  //TODO: consider case of multiple colons
+  const colonIdx = text.indexOf(":");
+  if (colonIdx === -1) {
+    // no colon, entire string is the query
+    return { query: text, overrides, raw: false };
+  }
+
+  const filterPart = text.slice(0, colonIdx).trim().toLowerCase();
+  query = text.slice(colonIdx + 1).trim();
+
+  // split filter part by commas
+  const tokens = filterPart.split(",").map(t => t.trim()).filter(Boolean);
+
+  // bare colon with no keywords, treat as raw
+  if (tokens.length === 0) {
+    return { query, overrides, raw: true };
+  }
+
+  // state object to carry the last category term through the parsing
+  const state = { term: "" };
+
+  // go through all comma-delimited keywords from input (the xx and yy from xx,yy:string)
+  const parsed = parseTokens(tokens, overrides, state);
 
   // nothing recognised at all: this was a title with a colon in it
   // ("Zelda: Ocarina of Time"), search the original text untouched
-  if (recognised === 0) {
+  if (parsed.recognised === 0) {
     return { query: text, overrides: {}, raw: false };
   }
 
@@ -375,8 +418,9 @@ export function parseQuery(input) {
   // swap to region-specific console-uid when both are present
   resolveRegionalConsole(overrides);
 
-  return { query: withTerm(state.term, query), overrides, raw };
+  return { query: withTerm(state.term, query), overrides, raw: parsed.raw };
 }
+
 
 /**
  * Merge parsed overrides into a settings object.
