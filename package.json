@@ -17,7 +17,10 @@
     "build:bundle": "node scripts/build.js",
     "build": "npm run build:bundle && web-ext build --source-dir build",
     "test": "node --test test/*.test.mjs",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info --test-reporter=junit --test-reporter-destination=junit.xml test/*.test.mjs"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info --test-reporter=junit --test-reporter-destination=junit.xml test/*.test.mjs",
+    "verify": "npm run lint && npm run test:coverage && npm run build && npm audit --omit=dev --audit-level=high",
+    "verify:clean": "npm ci --ignore-scripts && npm run verify",
+    "check": "npm run lint && npm test"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
