@@ -17,7 +17,7 @@
     "build:bundle": "node scripts/build.js",
     "build": "npm run build:bundle && web-ext build --source-dir build",
     "test": "node --test test/*.test.mjs",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info test/*.test.mjs"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info --test-reporter=junit --test-reporter-destination=junit.xml test/*.test.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
