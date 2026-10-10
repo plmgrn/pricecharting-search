@@ -23,7 +23,7 @@
     "check": "npm run lint && npm test"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "eslint": "10.12.0",
     "globals": "17.6.0",
     "web-ext": "10.7.0"
