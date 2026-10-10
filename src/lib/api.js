@@ -9,6 +9,4 @@
 // to think about which browser it's running in.
 
 // Prefer `globalThis` to avoid relying on lint-time globals.
-export const api = globalThis.browser?.runtime
-  ? globalThis.browser
-  : (typeof chrome !== "undefined" ? chrome : {});
+export const api = globalThis.browser?.runtime ? globalThis.browser : (typeof chrome !== "undefined" ? chrome : {});
