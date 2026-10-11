@@ -147,16 +147,17 @@ describe("buildSearchUrl", () => {
     assert.ok(url.includes("exclude-variants=true"));
     assert.ok(url.includes("show-images=false"));
   });
-  test("non-boolean excludeVariants is not sent", () => {
+
+  test("non-boolean excludeVariants is rejected and falls back to the default", () => {
     const s = { ...DEFAULTS, excludeVariants: "true" };
-    const url = buildSearchUrl("test", s);
-    assert.ok(!url.includes("exclude-variants="));
+    const { params } = deconstruct(buildSearchUrl("test", s));
+    assert.equal(params["exclude-variants"], String(DEFAULTS.excludeVariants)); // "false", not "true"
   });
 
-  test("non-boolean showImages is not sent", () => {
+  test("non-boolean showImages is rejected and falls back to the default", () => {
     const s = { ...DEFAULTS, showImages: "false" };
-    const url = buildSearchUrl("test", s);
-    assert.ok(!url.includes("show-images="));
+    const { params } = deconstruct(buildSearchUrl("test", s));
+    assert.equal(params["show-images"], String(DEFAULTS.showImages)); // "true", not "false"
   });
 
   test("null consoleUid is omitted", () => {
@@ -171,11 +172,11 @@ describe("buildSearchUrl", () => {
     assert.equal(params["sort"], "price-highest");
   });
 
-  test("language with spaces is used as-is (no validation)", () => {
-    const s = { ...DEFAULTS, language: " de " };
-    const url = buildSearchUrl("test", s);
-    // trimmed by the code
-    assert.ok(url.includes("/de/search-products"));
+  test("language that is not an exact allowlist value adds no locale prefix", () => {
+    for (const language of [" de ", "DE", "../x", "de/../fr"]) {
+      const { pathname } = deconstruct(buildSearchUrl("test", { ...DEFAULTS, language }));
+      assert.equal(pathname, "/search-products", JSON.stringify(language));
+    }
   });
 
   test("empty language after trim is omitted", () => {
