@@ -225,7 +225,28 @@ describe("custom URL template", () => {
     const s = { ...DEFAULTS, customUrlTemplate: "   " };
     const url = buildSearchUrl("test", s);
     // falls through to standard URL building
-    assert.ok(url.includes("pricecharting.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
+  });
+
+  test("template with invalid URL returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "https://example.com/{q" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with unsupported scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "ftp://example.com/{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with data: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "data:text/html,{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with javascript: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "javascript:alert({q})" };
+    assert.equal(buildSearchUrl("test", s), null);
   });
 
   test("data: scheme template returns null", () => {
@@ -457,7 +478,11 @@ describe("URL round-trip deconstruction", () => {
       customUrlTemplate: "https://example.com/?q={q}",
     });
     // raw blanks customUrlTemplate, so standard URL is built
-    assert.ok(url.includes("pricecharting.com"));
+    const { params } = deconstruct(url);
+    assert.ok(params["q"], "zelda");
+    assert.ok(!url.includes("example.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
     assert.ok(url.includes("q=zelda"));
   });
 
