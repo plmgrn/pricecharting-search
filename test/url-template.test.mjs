@@ -5,7 +5,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildSearchUrl, normalizeSelection } from "../src/lib/url-template.js";
+import { buildSearchUrl, normalizeSelection, templateProblem, isValidUrlTemplate } from "../src/lib/url-template.js";
 import { parseQuery, applyOverrides } from "../src/lib/query-parser.js";
 import { DEFAULTS } from "../src/lib/defaults.js";
 
@@ -226,7 +226,28 @@ describe("custom URL template", () => {
     const s = { ...DEFAULTS, customUrlTemplate: "   " };
     const url = buildSearchUrl("test", s);
     // falls through to standard URL building
-    assert.ok(url.includes("pricecharting.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
+  });
+
+  test("template with invalid URL returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "https://example.com/{q" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with unsupported scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "ftp://example.com/{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with data: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "data:text/html,{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with javascript: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "javascript:alert({q})" };
+    assert.equal(buildSearchUrl("test", s), null);
   });
 
   test("data: scheme template returns null", () => {
@@ -458,7 +479,11 @@ describe("URL round-trip deconstruction", () => {
       customUrlTemplate: "https://example.com/?q={q}",
     });
     // raw blanks customUrlTemplate, so standard URL is built
-    assert.ok(url.includes("pricecharting.com"));
+    const { params } = deconstruct(url);
+    assert.ok(params["q"], "zelda");
+    assert.ok(!url.includes("example.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
     assert.ok(url.includes("q=zelda"));
   });
 
@@ -471,4 +496,29 @@ describe("URL round-trip deconstruction", () => {
     assert.ok(pathname.startsWith("/de/"));
     assert.equal(params["region-name"], "pal");
   });
+});
+
+const BAD_TEMPLATES = [
+  ["https://{q}/",                  "placeholder-in-host"],
+  ["https://example.com{q}",        "placeholder-in-host"],
+  ["https://{q}.example.com/",      "placeholder-in-host"],
+  ["https://example.com/",          "missing-placeholder"],
+  ["https:///{q}",                  "missing-host"],
+  ["ftp://example.com/{q}",         "not-http"],
+  ["javascript:alert({q})",         "not-http"],
+  ["https://exa mple.com/{q}",      "unparseable"],
+  ["https://example.com/{q}" + "x".repeat(3000), "too-long"],
+  [42,                              "not-a-string"],
+];
+
+for (const [tmpl, reason] of BAD_TEMPLATES) {
+  test(`templateProblem(${JSON.stringify(String(tmpl)).slice(0, 40)}) is ${reason}`, () => {
+    assert.equal(templateProblem(tmpl), reason);
+    assert.equal(isValidUrlTemplate(tmpl), false);
+  });
+}
+
+test("a good template has no problem", () => {
+  assert.equal(templateProblem("https://example.com/?q={q}"), null);
+  assert.equal(templateProblem("  https://example.com/s/{q}/x  "), null);
 });
