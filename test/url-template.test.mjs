@@ -5,7 +5,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildSearchUrl, normalizeSelection } from "../src/lib/url-template.js";
+import { buildSearchUrl, normalizeSelection, templateProblem, isValidUrlTemplate } from "../src/lib/url-template.js";
 import { parseQuery, applyOverrides } from "../src/lib/query-parser.js";
 import { DEFAULTS } from "../src/lib/defaults.js";
 
@@ -496,4 +496,29 @@ describe("URL round-trip deconstruction", () => {
     assert.ok(pathname.startsWith("/de/"));
     assert.equal(params["region-name"], "pal");
   });
+});
+
+const BAD_TEMPLATES = [
+  ["https://{q}/",                  "placeholder-in-host"],
+  ["https://example.com{q}",        "placeholder-in-host"],
+  ["https://{q}.example.com/",      "placeholder-in-host"],
+  ["https://example.com/",          "missing-placeholder"],
+  ["https:///{q}",                  "missing-host"],
+  ["ftp://example.com/{q}",         "not-http"],
+  ["javascript:alert({q})",         "not-http"],
+  ["https://exa mple.com/{q}",      "unparseable"],
+  ["https://example.com/{q}" + "x".repeat(3000), "too-long"],
+  [42,                              "not-a-string"],
+];
+
+for (const [tmpl, reason] of BAD_TEMPLATES) {
+  test(`templateProblem(${JSON.stringify(String(tmpl)).slice(0, 40)}) is ${reason}`, () => {
+    assert.equal(templateProblem(tmpl), reason);
+    assert.equal(isValidUrlTemplate(tmpl), false);
+  });
+}
+
+test("a good template has no problem", () => {
+  assert.equal(templateProblem("https://example.com/?q={q}"), null);
+  assert.equal(templateProblem("  https://example.com/s/{q}/x  "), null);
 });
