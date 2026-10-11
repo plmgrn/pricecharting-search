@@ -3,8 +3,19 @@
 // Pure module: no DOM, no listeners, no `api` import. Trivially unit-
 // testable in isolation.
 
-import { ALWAYS_SEND_PARAMS, SEARCH_BASE_URL } from "./defaults.js";
+import { ALWAYS_SEND_PARAMS, SEARCH_BASE_URL, DEFAULTS,
+  MAX_SELECTION_CAP, MAX_TEMPLATE_LENGTH, } from "./defaults.js";
 import { sanitizeSettings } from "./settings-schema.js";
+
+const LONE_SURROGATE =
+  /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+
+/** encodeURIComponent throws on unpaired surrogates; replace them with U+FFFD. */
+function toWellFormed(s) {
+  return typeof s.toWellFormed === "function"
+    ? s.toWellFormed()
+    : s.replace(LONE_SURROGATE, "\uFFFD");
+}
 
 /**
  * Normalize the user's selection: optionally trim & collapse
@@ -16,15 +27,41 @@ import { sanitizeSettings } from "./settings-schema.js";
  */
 export function normalizeSelection(raw, settings) {
   let s = raw == null ? "" : String(raw);
-  if (settings.trimSelection) {
-    // Trim and collapse all runs of whitespace into single spaces.
-    s = s.trim().replace(/\s+/g, " ");
+  if (settings.trimSelection) s = s.trim().replace(/\s+/g, " ");
+
+  const n = Math.trunc(Number(settings.maxSelectionLength));
+  const max = Number.isFinite(n) && n >= 1
+    ? Math.min(n, MAX_SELECTION_CAP)
+    : DEFAULTS.maxSelectionLength;
+
+  if (s.length > max) {
+    s = s.slice(0, max);
+    const last = s.charCodeAt(s.length - 1);
+    if (last >= 0xd800 && last <= 0xdbff) s = s.slice(0, -1); // half a pair
   }
-  // hard ceiling of 2000 even if someone edits storage directly
-  const max = Math.min(2000, Math.max(0, Math.trunc(settings.maxSelectionLength) || 200));
-  if (max > 0 && s.length > max) s = s.slice(0, max);
-  return s;
+  return toWellFormed(s);
 }
+
+
+/**
+ * A custom template is usable when it is http(s), contains {q}, the
+ * authority (host) is fixed, and {q} only appears after it.
+ * Exported so the options page can show an inline error.
+ */
+export function isValidUrlTemplate(tmpl) {
+  if (typeof tmpl !== "string" || tmpl.length > MAX_TEMPLATE_LENGTH) return false;
+  const t = tmpl.trim();
+  if (!t.includes("{q}")) return false;
+  const m = /^https?:\/\/([^/?#]*)/i.exec(t);
+  if (!m || !m[1] || m[1].includes("{q}")) return false;
+  try {
+    new URL(t.replaceAll("{q}", "x"));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 
 /**
  * Map of settings => URL parameter name. Listed here (not in defaults.js)
@@ -76,19 +113,16 @@ const BOOLEAN_PARAMS = Object.freeze({
 export function buildSearchUrl(selection, settings) {
   if (!selection) return null;
 
+  const q = toWellFormed(String(selection));
+
   settings = sanitizeSettings(settings);// validates everything the parser or popup merged in
 
   // Custom template wins.
   const tmpl = settings.customUrlTemplate.trim();
   if (tmpl) {
-    if (!tmpl.includes("{q}")) {
-      // Misconfigured template, do not silently search the wrong URL.
-      return null;
-    }
-    const resolved = tmpl.replace(/\{q\}/g, encodeURIComponent(selection));
-    // only allow http(s), block javascript:, data:, etc.
-    if (!/^https?:\/\//i.test(resolved)) return null;
-    return resolved;
+    if (!isValidUrlTemplate(tmpl)) return null; // misconfigured: never search the wrong URL
+    const encoded = encodeURIComponent(q);
+    return tmpl.replaceAll("{q}", () => encoded); // function replacer: no "$&" surprises
   }
 
   const url = new URL(SEARCH_BASE_URL);
