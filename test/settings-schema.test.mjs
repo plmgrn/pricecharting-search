@@ -50,3 +50,12 @@ test("validatePatch reports bad values and ignores unknown keys", () => {
   assert.deepEqual(Object.keys(r.errors), ["consoleUid"]);
   assert.deepEqual(r.value, { maxSelectionLength: 200 });
 });
+
+test("validatePatch rejects a patch that is not a plain record", () => {
+  for (const bad of [null, undefined, "str", 5, true, []]) {
+    const r = validatePatch(bad);
+    assert.equal(r.ok, false, JSON.stringify(bad));
+    assert.deepEqual(r.errors, { _patch: "must be an object" });
+    assert.deepEqual(r.value, {});
+  }
+});
