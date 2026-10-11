@@ -54,10 +54,13 @@ export const RULES = Object.freeze({
 
 const KEYS = Object.freeze(Object.keys(DEFAULTS));
 
+//Verify that v looks like a record object
+const isRecord = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+
 /** Lenient, for reads: invalid or missing keys fall back to defaults. */
 export function sanitizeSettings(stored) {
   const out = { ...DEFAULTS };
-  if (stored === null || typeof stored !== "object" || Array.isArray(stored)) {
+  if (!isRecord(stored)) {
     return out;
   }
   for (const key of KEYS) {
@@ -78,7 +81,7 @@ export function sanitizeSettings(stored) {
 export function validatePatch(patch) {
   const value = {};
   const errors = {};
-  if (patch === null || typeof patch !== "object") {
+  if (!isRecord(patch)) {
     return { ok: false, value, errors: { _patch: "must be an object" } };
   }
   for (const key of Object.keys(patch)) {
