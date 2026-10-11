@@ -4,6 +4,7 @@
 // testable in isolation.
 
 import { ALWAYS_SEND_PARAMS, SEARCH_BASE_URL } from "./defaults.js";
+import { sanitizeSettings } from "./settings-schema.js";
 
 /**
  * Normalize the user's selection: optionally trim & collapse
@@ -75,8 +76,10 @@ const BOOLEAN_PARAMS = Object.freeze({
 export function buildSearchUrl(selection, settings) {
   if (!selection) return null;
 
+  settings = sanitizeSettings(settings);// validates everything the parser or popup merged in
+
   // Custom template wins.
-  const tmpl = (settings.customUrlTemplate || "").trim();
+  const tmpl = settings.customUrlTemplate.trim();
   if (tmpl) {
     if (!tmpl.includes("{q}")) {
       // Misconfigured template, do not silently search the wrong URL.
@@ -91,9 +94,8 @@ export function buildSearchUrl(selection, settings) {
   const url = new URL(SEARCH_BASE_URL);
 
   // insert locale prefix (e.g. /de/, /fr/) before /search-products
-  const lang = (settings.language || "").trim();
-  if (lang) {
-    url.pathname = "/" + lang + url.pathname;
+  if (settings.language) { // settings.language is pre-validated
+    url.pathname = "/" + settings.language + url.pathname;
   }
 
   // Always-sent params first so explicit settings can theoretically
