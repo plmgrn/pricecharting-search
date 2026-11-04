@@ -12,6 +12,7 @@
 
 import { api } from "./api.js";
 import { DEFAULTS, SCHEMA_VERSION } from "./defaults.js";
+import { sanitizeSettings, validatePatch } from "./settings-schema.js";
 
 /**
  * Pick the available storage area.
@@ -37,7 +38,7 @@ export async function readSettings(_api) {
   try {
     // only read keys we know about, ignore stray data in the area
     const stored = await area.get(Object.keys(DEFAULTS));
-    return { ...DEFAULTS, ...(stored || {}) };
+    return sanitizeSettings(stored);
   } catch {
     return { ...DEFAULTS };
   }
@@ -46,8 +47,7 @@ export async function readSettings(_api) {
 /**
  * Write a partial settings patch. Unspecified keys are left as-is.
  * Always stamps the current SCHEMA_VERSION.
- *
- * @param {object} patch
+ * @param {object} patch partial settings to write to storage
  * @param {object} [_api] override for testing
  * @returns {Promise<void>}
  */
@@ -55,11 +55,15 @@ export async function writeSettings(patch, _api) {
   const area = pickArea(_api);
   if (!area) return;
   const clean = {};
-  for (const k of Object.keys(patch)) {
-    if (Object.hasOwn(DEFAULTS, k)) clean[k] = patch[k];
-  }
-  clean.schemaVersion = SCHEMA_VERSION;
-  await area.set(clean);
+
+  // Validate the patch before writing, so we don't accidentally
+  // overwrite good data with garbage. The writer always stamps the
+  // current SCHEMA_VERSION, so we don't allow it to be set in the patch.
+  const { ok, value, errors } = validatePatch(patch);
+  if (!ok) throw new TypeError(`Invalid settings: ${Object.keys(errors).join(", ")}`);
+  await area.set({ ...value, schemaVersion: SCHEMA_VERSION });
+    clean.schemaVersion = SCHEMA_VERSION;
+    await area.set(clean);
 }
 
 /**
@@ -106,8 +110,8 @@ export async function migrateSettings(_api) {
     ? stored.schemaVersion
     : 0;
 
-  // Start from defaults so any newly-added keys are present.
-  const s = { ...DEFAULTS, ...stored };
+  // Sanitize the stored settings first, so we don't try to migrate garbage.
+  const s = sanitizeSettings(stored);
 
   switch (fromVersion) {
     case 0:

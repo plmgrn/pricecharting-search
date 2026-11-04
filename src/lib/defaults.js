@@ -14,6 +14,19 @@
 
 export const SCHEMA_VERSION = 1;
 
+// Shared with url-template.js (normalizeSelection) and the options page.
+export const MAX_SELECTION_CAP = 2000;
+export const MAX_TEMPLATE_LENGTH = 2048;
+export const MAX_MENU_TITLE_LENGTH = 120;
+
+export const OPEN_BEHAVIORS = Object.freeze(["next", "end", "window", "current"]);
+export const REGIONS = Object.freeze(["ntsc", "pal", "japan"]);
+export const LANGUAGES = Object.freeze(["de", "es", "fr", "nl", "pt", "ru"]);
+export const SORTS = Object.freeze(["popularity", "name", "price-highest", "change-dollar"]);
+export const BROAD_CATEGORIES = Object.freeze([
+  "video-games", "trading-cards", "comic-books", "funko-pops", "coins", "lego-sets",
+]);
+
 /**
  * URL parameters sent on every standard search. Skipped when a
  * custom URL template is active (see `buildSearchUrl`).

@@ -5,7 +5,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildSearchUrl, normalizeSelection } from "../src/lib/url-template.js";
+import { buildSearchUrl, normalizeSelection, templateProblem, isValidUrlTemplate } from "../src/lib/url-template.js";
 import { parseQuery, applyOverrides } from "../src/lib/query-parser.js";
 import { DEFAULTS } from "../src/lib/defaults.js";
 
@@ -147,16 +147,17 @@ describe("buildSearchUrl", () => {
     assert.ok(url.includes("exclude-variants=true"));
     assert.ok(url.includes("show-images=false"));
   });
-  test("non-boolean excludeVariants is not sent", () => {
+
+  test("non-boolean excludeVariants is rejected and falls back to the default", () => {
     const s = { ...DEFAULTS, excludeVariants: "true" };
-    const url = buildSearchUrl("test", s);
-    assert.ok(!url.includes("exclude-variants="));
+    const { params } = deconstruct(buildSearchUrl("test", s));
+    assert.equal(params["exclude-variants"], String(DEFAULTS.excludeVariants)); // "false", not "true"
   });
 
-  test("non-boolean showImages is not sent", () => {
+  test("non-boolean showImages is rejected and falls back to the default", () => {
     const s = { ...DEFAULTS, showImages: "false" };
-    const url = buildSearchUrl("test", s);
-    assert.ok(!url.includes("show-images="));
+    const { params } = deconstruct(buildSearchUrl("test", s));
+    assert.equal(params["show-images"], String(DEFAULTS.showImages)); // "true", not "false"
   });
 
   test("null consoleUid is omitted", () => {
@@ -171,11 +172,11 @@ describe("buildSearchUrl", () => {
     assert.equal(params["sort"], "price-highest");
   });
 
-  test("language with spaces is used as-is (no validation)", () => {
-    const s = { ...DEFAULTS, language: " de " };
-    const url = buildSearchUrl("test", s);
-    // trimmed by the code
-    assert.ok(url.includes("/de/search-products"));
+  test("language that is not an exact allowlist value adds no locale prefix", () => {
+    for (const language of [" de ", "DE", "../x", "de/../fr"]) {
+      const { pathname } = deconstruct(buildSearchUrl("test", { ...DEFAULTS, language }));
+      assert.equal(pathname, "/search-products", JSON.stringify(language));
+    }
   });
 
   test("empty language after trim is omitted", () => {
@@ -225,7 +226,28 @@ describe("custom URL template", () => {
     const s = { ...DEFAULTS, customUrlTemplate: "   " };
     const url = buildSearchUrl("test", s);
     // falls through to standard URL building
-    assert.ok(url.includes("pricecharting.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
+  });
+
+  test("template with invalid URL returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "https://example.com/{q" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with unsupported scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "ftp://example.com/{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with data: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "data:text/html,{q}" };
+    assert.equal(buildSearchUrl("test", s), null);
+  });
+
+  test("template with javascript: scheme returns null", () => {
+    const s = { ...DEFAULTS, customUrlTemplate: "javascript:alert({q})" };
+    assert.equal(buildSearchUrl("test", s), null);
   });
 
   test("data: scheme template returns null", () => {
@@ -457,7 +479,11 @@ describe("URL round-trip deconstruction", () => {
       customUrlTemplate: "https://example.com/?q={q}",
     });
     // raw blanks customUrlTemplate, so standard URL is built
-    assert.ok(url.includes("pricecharting.com"));
+    const { params } = deconstruct(url);
+    assert.ok(params["q"], "zelda");
+    assert.ok(!url.includes("example.com"));
+    const hostname = new URL(url).hostname.toLowerCase();
+    assert.ok(hostname === "www.pricecharting.com" || hostname.endsWith(".pricecharting.com"));
     assert.ok(url.includes("q=zelda"));
   });
 
@@ -470,4 +496,29 @@ describe("URL round-trip deconstruction", () => {
     assert.ok(pathname.startsWith("/de/"));
     assert.equal(params["region-name"], "pal");
   });
+});
+
+const BAD_TEMPLATES = [
+  ["https://{q}/",                  "placeholder-in-host"],
+  ["https://example.com{q}",        "placeholder-in-host"],
+  ["https://{q}.example.com/",      "placeholder-in-host"],
+  ["https://example.com/",          "missing-placeholder"],
+  ["https:///{q}",                  "missing-host"],
+  ["ftp://example.com/{q}",         "not-http"],
+  ["javascript:alert({q})",         "not-http"],
+  ["https://exa mple.com/{q}",      "unparseable"],
+  ["https://example.com/{q}" + "x".repeat(3000), "too-long"],
+  [42,                              "not-a-string"],
+];
+
+for (const [tmpl, reason] of BAD_TEMPLATES) {
+  test(`templateProblem(${JSON.stringify(String(tmpl)).slice(0, 40)}) is ${reason}`, () => {
+    assert.equal(templateProblem(tmpl), reason);
+    assert.equal(isValidUrlTemplate(tmpl), false);
+  });
+}
+
+test("a good template has no problem", () => {
+  assert.equal(templateProblem("https://example.com/?q={q}"), null);
+  assert.equal(templateProblem("  https://example.com/s/{q}/x  "), null);
 });

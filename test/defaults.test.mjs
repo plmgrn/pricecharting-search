@@ -107,6 +107,7 @@ describe("SEARCH_BASE_URL", () => {
 
   test("points to pricecharting.com", () => {
     const url = new URL(SEARCH_BASE_URL);
-    assert.ok(url.hostname.includes("pricecharting.com"));
+    const parsedHostname = url.hostname.toLowerCase();
+    assert.ok(parsedHostname === "www.pricecharting.com" || parsedHostname.endsWith(".pricecharting.com"));
   });
 });

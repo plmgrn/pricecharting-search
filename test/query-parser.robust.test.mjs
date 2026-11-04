@@ -7,7 +7,6 @@
 //   3. Pipeline invariants: stored settings x inline filters, checked
 //      against an independent oracle of what a correct URL looks like
 //
-// Tests marked `todo` are open policy decisions, not bugs.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -50,13 +49,16 @@ function forAll(name, gen, check) {
 }
 
 const CATEGORY_KW = ["games", "cards", "funko", "lego", "comics", "coins"];
+
 // TCG keywords keep the game name in the query. Independent copy of the table.
 const TCG_TERMS = {
   pokemon: "pokemon", pkmn: "pokemon", poke: "pokemon", mtg: "magic", magic: "magic",
   yugioh: "yugioh", ygo: "yugioh", lorcana: "lorcana", onepiece: "one piece",
   digimon: "digimon", dragonball: "dragon ball", dbz: "dragon ball",
 };
+
 const TCG_KW = Object.keys(TCG_TERMS);
+
 // what the query should be after parsing: term of the LAST category keyword
 function expectedQuery(tokens, q) {
   const q2 = q.trim();
@@ -69,6 +71,7 @@ function expectedQuery(tokens, q) {
   if (q2.toLowerCase().split(/\s+/).includes(term.split(" ")[0])) return q2;
   return q2 ? term + " " + q2 : term;
 }
+
 const REGION_KW   = ["pal", "eu", "jp", "japan", "us", "ntsc"];
 const SORT_KW     = ["alpha", "expensive", "cheap", "latest", "novar", "noimages"];
 const AMERICAS    = CONSOLES.filter(c => c.group === "Americas");
