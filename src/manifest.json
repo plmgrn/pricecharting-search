@@ -27,6 +27,7 @@
     "128": "icons/pricecharting-search_128x128.png"
   },
   "action": {
+    "default_area": "navbar",
     "default_title": "Search on PriceCharting",
     "default_popup": "popup/popup.html",
     "default_icon": {
