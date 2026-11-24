@@ -96,6 +96,22 @@ form {
   cursor: pointer;
 }
 
+/* Pin-to-toolbar hint shown under the form */
+.hint {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+/* display above would otherwise override the hidden attribute */
+.hint[hidden] { display: none; }
+.hint p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
 .footnote {
   text-align: center;
   color: var(--muted);
