@@ -12,8 +12,8 @@
   },
   "engines": { "node": ">=22.13" },
   "scripts": {
-    "start:firefox": "web-ext run",
-    "start:chrome": "web-ext run -t chromium",
+    "start:firefox": "npm run build:bundle && web-ext run --no-config-discovery --config=./web-ext-config.cjs --source-dir build --verbose",
+    "start:chrome": "npm run build:bundle && web-ext run --no-config-discovery --config=./web-ext-config.cjs --source-dir build -t chromium",
     "lint": "eslint src/ && npm run build:bundle && web-ext lint --source-dir build",
     "build:bundle": "node scripts/build.js",
     "build": "npm run build:bundle && web-ext build --source-dir build",

@@ -1,7 +1,7 @@
-// web-ext configuration
+// Shared web-ext configuration, must work on any machine.
 // Docs: https://github.com/mozilla/web-ext
-
 module.exports = {
+  //default source dir; the npm build/lint scripts override it with --source-dir build
   sourceDir: "src",
   artifactsDir: "web-ext-artifacts",
   ignoreFiles: [
