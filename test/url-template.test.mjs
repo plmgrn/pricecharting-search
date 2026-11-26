@@ -270,6 +270,16 @@ describe("custom URL template", () => {
 // -- end-to-end pipeline --
 
 describe("end-to-end URL pipeline", () => {
+  test("360 alias sends the query and the regional Xbox 360 filter", () => {
+    for (const [regionName, consoleUid] of [["", "G10"], ["pal", "G89"], ["japan", "G124"]]) {
+      const url = new URL(fullPipeline("360:gta iv", { ...DEFAULTS, regionName }));
+      assert.equal(url.searchParams.get("q"), "gta iv");
+      assert.equal(url.searchParams.get("console-uid"), consoleUid);
+      assert.equal(url.searchParams.get("broad-category"), "video-games");
+      assert.equal(url.searchParams.get("region-name"), null);
+    }
+  });
+
   test("jp,ds -> console-uid=G111, no region-name", () => {
     const url = fullPipeline("jp,ds:zelda");
     assert.ok(url.includes("console-uid=G111"));

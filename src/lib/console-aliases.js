@@ -85,6 +85,7 @@ export const MANUAL_ALIASES = Object.freeze({
   "series s":     "G7585",
 
   // -- Xbox 360 --
+  "360":          "G10",
   "360 slim":     "G10",  // hardware variant, same games
   "360 e":        "G10",
 

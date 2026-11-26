@@ -69,6 +69,16 @@ function clearCalls() {
 }
 
 describe("popup entry point", () => {
+  test("360 alias filters Xbox 360 without including the prefix in q", async () => {
+    clearCalls();
+    elements.query.value = "360:gta iv";
+    await handlers.get("form:submit")({ preventDefault() {} });
+
+    const url = new URL(calls.tabsCreated[0].url);
+    assert.equal(url.searchParams.get("q"), "gta iv");
+    assert.equal(url.searchParams.get("console-uid"), "G10");
+  });
+
   test("parses an inline filter before opening the search URL", async () => {
     clearCalls();
     elements.query.value = "ps2:god of war";
