@@ -30,3 +30,5 @@ These thing should improve the performance, both in terms of running and UX
     - [ ] An 'i' button or equiv in the search box
     - [ ] Alternatively make default placeholder text in the box remind of the query syntax
         - [ ] Setting to disable this
+- [ ] Add an optional advanced search popup view
+  - This could have the user set the console from a dropdown along with region etc.
