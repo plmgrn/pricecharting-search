@@ -110,6 +110,30 @@ describe("background entry point", () => {
     assert.equal(url.searchParams.get("broad-category"), "video-games");
   });
 
+  test("360 alias works from context menu, omnibox, and keyboard shortcut", async () => {
+    storageData.shortcutEnabled = true;
+    selectedText = "360:gta iv";
+    try {
+      for (const search of [
+        () => contextMenuClick.emit(
+          { menuItemId: "pricecharting-search-selection", selectionText: "360:gta iv" },
+          { id: 7, index: 3 },
+        ),
+        () => omniboxInput.emit("360:gta iv", "newForegroundTab"),
+        () => command.emit("search-selection"),
+      ]) {
+        clearCalls();
+        await search();
+        const url = new URL(calls.tabsCreated[0].url);
+        assert.equal(url.searchParams.get("q"), "gta iv");
+        assert.equal(url.searchParams.get("console-uid"), "G10");
+      }
+    } finally {
+      delete storageData.shortcutEnabled;
+      selectedText = "";
+    }
+  });
+
   test("empty, whitespace-only, and filter-only selections open no tab", async () => {
     clearCalls();
     for (const selectionText of ["", "   ", "ps2:"]) {

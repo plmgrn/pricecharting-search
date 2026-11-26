@@ -4,6 +4,8 @@
 
 Identified bugs
 
+- [ ] Fix `cheap`/`budget` and `newest`/`recent`/`latest` filters silently falling back to popularity sorting
+    - Verify the supported PriceCharting sort values, align validation, and test the final search URL
 - [ ] Fix hotbar search functioning 
     - [x] Fix bug with filters being used as the query (should never happen)
     - [x] Fix console aliases list with consoleuid (vita marked as G43 when it is G101 tms.)
